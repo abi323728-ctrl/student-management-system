@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Demo Credentials Autofill
   fillDemoBtn.addEventListener('click', () => {
     hideAlert();
-    emailInput.value = 'intern@nextlogic.com';
+    emailInput.value = 'intern@nxtlogic.com';
     passwordInput.value = 'NextLogic@2026';
     handleEmailValidation(true);
     handlePasswordValidation(true);

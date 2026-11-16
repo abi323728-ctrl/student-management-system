@@ -9,7 +9,7 @@ describe('Server & Endpoints Integration Suite', () => {
     assert.strictEqual(res.status, 200);
     assert.match(res.headers.get('content-type'), /text\/html/);
     const text = await res.text();
-    assert.match(text, /NextLogic Portal/);
+    assert.match(text, /NXTLOGIC Portal/i);
   });
 
   test('GET /style.css serves stylesheet with 200 OK', async () => {

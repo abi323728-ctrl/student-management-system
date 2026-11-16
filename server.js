@@ -63,11 +63,11 @@ const server = http.createServer(async (req, res) => {
 
           // Demo check (allow demo credentials or any valid format meeting policy)
           const { email, password } = payload;
-          if (email === 'intern@nextlogic.com' && password === 'NextLogic@2026') {
+          if ((email === 'intern@nxtlogic.com' || email === 'intern@nextlogic.com') && (password === 'NextLogic@2026' || password === 'NxtLogic@2026')) {
             res.writeHead(200, { 'Content-Type': 'application/json' });
             return res.end(JSON.stringify({
               success: true,
-              message: 'Authentication successful! Welcome, NextLogic Intern.'
+              message: 'Authentication successful! Welcome, NXTLOGIC Intern.'
             }));
           }
 

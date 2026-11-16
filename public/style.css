@@ -90,33 +90,40 @@ body {
   justify-content: space-between;
 }
 
+.brand-header-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
 .brand-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius-md);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
   background: #ffffff;
   border: 1px solid #fed7aa;
-  color: #ea580c;
-  box-shadow: 0 4px 12px rgba(234, 88, 12, 0.12);
-  margin-bottom: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(234, 88, 12, 0.1);
+  flex-shrink: 0;
 }
 
-.brand-icon {
-  width: 26px;
-  height: 26px;
+.brand-logo-small {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .company-tag {
   display: inline-block;
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: #c2410c;
-  margin-bottom: 8px;
 }
 
 .hero-title {
@@ -132,21 +139,21 @@ body {
   font-size: 0.88rem;
   color: #9a3412;
   line-height: 1.5;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .hero-features {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .feature-item {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 0.85rem;
+  font-size: 0.84rem;
   font-weight: 500;
   color: #7c2d12;
 }
@@ -163,6 +170,43 @@ body {
   font-size: 0.72rem;
   font-weight: 700;
   flex-shrink: 0;
+}
+
+/* Showcase box for 2nd picture in free space */
+.hero-showcase-box {
+  margin-top: 22px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(254, 215, 170, 0.9);
+  border-radius: var(--radius-md);
+  text-align: center;
+  box-shadow: 0 4px 14px rgba(234, 88, 12, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-showcase-img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  border: 3px solid #ffffff;
+  margin-bottom: 8px;
+  transition: transform var(--transition-fast);
+}
+
+.hero-showcase-img:hover {
+  transform: scale(1.04);
+}
+
+.showcase-caption {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #c2410c;
+  letter-spacing: 0.04em;
 }
 
 .hero-footer {
