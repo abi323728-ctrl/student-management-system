@@ -11,153 +11,180 @@
 </head>
 <body>
   <main class="page-container">
-    <div class="login-card">
-      <!-- Brand Header -->
-      <header class="card-header">
-        <div class="brand-badge">
-          <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-          </svg>
-        </div>
-        <h1 class="card-title">Welcome back</h1>
-        <p class="card-subtitle">Please enter your credentials to access your account.</p>
-      </header>
-
-      <!-- Alert Notification Banner -->
-      <div id="alertBanner" class="alert-banner" role="alert" aria-live="assertive" hidden>
-        <span class="alert-icon" id="alertIcon"></span>
-        <span class="alert-message" id="alertMessage"></span>
-      </div>
-
-      <!-- Login Form -->
-      <form id="loginForm" class="login-form" novalidate>
-        <!-- Email Field -->
-        <div class="form-group" id="groupEmail">
-          <label for="email" class="form-label">
-            Email address <span class="required">*</span>
-          </label>
-          <div class="input-wrapper">
-            <span class="input-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="2" y="4" width="20" height="16" rx="2"/>
-                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
-              </svg>
-            </span>
-            <input 
-              type="email" 
-              id="email" 
-              name="email" 
-              class="form-input" 
-              placeholder="e.g. intern@nextlogic.com" 
-              autocomplete="email"
-              required 
-              aria-describedby="emailError"
-            >
-            <span class="status-icon" id="emailStatusIcon" aria-hidden="true"></span>
+    <div class="login-card horizontal-card">
+      <!-- Left Hero Branding Column -->
+      <aside class="card-hero-panel">
+        <div class="hero-content">
+          <div class="brand-badge">
+            <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
           </div>
-          <div id="emailError" class="field-error" aria-live="polite"></div>
+          <span class="company-tag">NextLogic Portal</span>
+          <h1 class="hero-title">Secure & Simple User Login</h1>
+          <p class="hero-desc">Access your internship workspace, tools, and project dashboards in one secure place.</p>
+          
+          <ul class="hero-features">
+            <li class="feature-item">
+              <span class="feature-check">✓</span>
+              <span>Interactive real-time field validation</span>
+            </li>
+            <li class="feature-item">
+              <span class="feature-check">✓</span>
+              <span>Enhanced password security rules</span>
+            </li>
+            <li class="feature-item">
+              <span class="feature-check">✓</span>
+              <span>Seamless localhost server integration</span>
+            </li>
+          </ul>
+        </div>
+        <div class="hero-footer">
+          <p>© 2026 NextLogic Inc. All rights reserved.</p>
+        </div>
+      </aside>
+
+      <!-- Right Form Column -->
+      <section class="card-form-panel">
+        <header class="form-header">
+          <h2 class="form-title">Welcome back</h2>
+          <p class="form-subtitle">Please enter your details to sign in.</p>
+        </header>
+
+        <!-- Alert Notification Banner -->
+        <div id="alertBanner" class="alert-banner" role="alert" aria-live="assertive" hidden>
+          <span class="alert-icon" id="alertIcon"></span>
+          <span class="alert-message" id="alertMessage"></span>
         </div>
 
-        <!-- Password Field -->
-        <div class="form-group" id="groupPassword">
-          <div class="label-row">
-            <label for="password" class="form-label">
-              Password <span class="required">*</span>
+        <!-- Login Form -->
+        <form id="loginForm" class="login-form" novalidate>
+          <!-- Email Field -->
+          <div class="form-group" id="groupEmail">
+            <label for="email" class="form-label">
+              Email address <span class="required">*</span>
             </label>
-            <a href="#" class="forgot-link" tabindex="0">Forgot password?</a>
+            <div class="input-wrapper">
+              <span class="input-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="4" width="20" height="16" rx="2"/>
+                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                </svg>
+              </span>
+              <input 
+                type="email" 
+                id="email" 
+                name="email" 
+                class="form-input" 
+                placeholder="e.g. intern@nextlogic.com" 
+                autocomplete="email"
+                required 
+                aria-describedby="emailError"
+              >
+              <span class="status-icon" id="emailStatusIcon" aria-hidden="true"></span>
+            </div>
+            <div id="emailError" class="field-error" aria-live="polite"></div>
           </div>
-          <div class="input-wrapper">
-            <span class="input-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-              </svg>
-            </span>
-            <input 
-              type="password" 
-              id="password" 
-              name="password" 
-              class="form-input" 
-              placeholder="Enter your password" 
-              autocomplete="current-password"
-              required 
-              aria-describedby="passwordError passwordRules"
-            >
-            <button 
-              type="button" 
-              id="togglePassword" 
-              class="toggle-password-btn" 
-              aria-label="Show password"
-              title="Show password"
-            >
-              <svg id="eyeIcon" class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                <circle cx="12" cy="12" r="3"/>
-              </svg>
-            </button>
+
+          <!-- Password Field -->
+          <div class="form-group" id="groupPassword">
+            <div class="label-row">
+              <label for="password" class="form-label">
+                Password <span class="required">*</span>
+              </label>
+              <a href="#" class="forgot-link" tabindex="0">Forgot?</a>
+            </div>
+            <div class="input-wrapper">
+              <span class="input-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+              </span>
+              <input 
+                type="password" 
+                id="password" 
+                name="password" 
+                class="form-input" 
+                placeholder="Enter your password" 
+                autocomplete="current-password"
+                required 
+                aria-describedby="passwordError passwordRules"
+              >
+              <button 
+                type="button" 
+                id="togglePassword" 
+                class="toggle-password-btn" 
+                aria-label="Show password"
+                title="Show password"
+              >
+                <svg id="eyeIcon" class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </div>
+            <div id="passwordError" class="field-error" aria-live="polite"></div>
+
+            <!-- Password Live Helper Requirements -->
+            <div class="password-rules" id="passwordRules">
+              <p class="rules-title">Password must contain:</p>
+              <ul class="rules-list">
+                <li id="ruleLength" class="rule-item">
+                  <span class="rule-bullet">•</span> 8+ chars
+                </li>
+                <li id="ruleUpper" class="rule-item">
+                  <span class="rule-bullet">•</span> 1 uppercase
+                </li>
+                <li id="ruleNumber" class="rule-item">
+                  <span class="rule-bullet">•</span> 1 number
+                </li>
+                <li id="ruleSpecial" class="rule-item">
+                  <span class="rule-bullet">•</span> 1 symbol
+                </li>
+              </ul>
+            </div>
           </div>
-          <div id="passwordError" class="field-error" aria-live="polite"></div>
 
-          <!-- Password Live Helper Requirements -->
-          <div class="password-rules" id="passwordRules">
-            <p class="rules-title">Password must contain:</p>
-            <ul class="rules-list">
-              <li id="ruleLength" class="rule-item">
-                <span class="rule-bullet">•</span> 8+ characters
-              </li>
-              <li id="ruleUpper" class="rule-item">
-                <span class="rule-bullet">•</span> At least 1 uppercase letter
-              </li>
-              <li id="ruleNumber" class="rule-item">
-                <span class="rule-bullet">•</span> At least 1 number
-              </li>
-              <li id="ruleSpecial" class="rule-item">
-                <span class="rule-bullet">•</span> At least 1 special symbol (@$!%*?&)
-              </li>
-            </ul>
+          <!-- Options Row -->
+          <div class="form-options">
+            <label class="checkbox-container">
+              <input type="checkbox" id="rememberMe" name="rememberMe">
+              <span class="checkmark"></span>
+              <span class="checkbox-label">Remember me</span>
+            </label>
           </div>
-        </div>
 
-        <!-- Options Row -->
-        <div class="form-options">
-          <label class="checkbox-container">
-            <input type="checkbox" id="rememberMe" name="rememberMe">
-            <span class="checkmark"></span>
-            <span class="checkbox-label">Remember me for 30 days</span>
-          </label>
-        </div>
+          <!-- Submit Button -->
+          <button type="submit" id="submitBtn" class="btn-submit">
+            <span class="btn-text">Sign In</span>
+            <span class="btn-spinner" id="btnSpinner" aria-hidden="true" hidden></span>
+          </button>
+        </form>
 
-        <!-- Submit Button -->
-        <button type="submit" id="submitBtn" class="btn-submit">
-          <span class="btn-text">Sign in to Account</span>
-          <span class="btn-spinner" id="btnSpinner" aria-hidden="true" hidden></span>
-        </button>
-      </form>
+        <!-- Demo Credentials Helper Box -->
+        <section class="demo-box" aria-label="Demo Credentials">
+          <div class="demo-header">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="16" x2="12" y2="12"/>
+              <line x1="12" y1="8" x2="12.01" y2="8"/>
+            </svg>
+            <span>Mentor Demo Account</span>
+          </div>
+          <button type="button" id="fillDemoBtn" class="btn-fill-demo">
+            Autofill Test Credentials
+          </button>
+        </section>
 
-      <!-- Demo Credentials Helper Box -->
-      <section class="demo-box" aria-label="Demo Credentials">
-        <div class="demo-header">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"/>
-            <line x1="12" y1="16" x2="12" y2="12"/>
-            <line x1="12" y1="8" x2="12.01" y2="8"/>
-          </svg>
-          <span>Mentor Review Demo Account</span>
-        </div>
-        <p class="demo-text">Click to autofill valid test credentials:</p>
-        <button type="button" id="fillDemoBtn" class="btn-fill-demo">
-          Autofill Test Credentials
-        </button>
+        <!-- Card Footer -->
+        <footer class="card-footer">
+          <p>Don't have an account? <a href="#" class="signup-link">Sign up</a></p>
+        </footer>
       </section>
-
-      <!-- Card Footer -->
-      <footer class="card-footer">
-        <p>Don't have an account? <a href="#" class="signup-link">Create an account</a></p>
-      </footer>
     </div>
   </main>
 
   <script type="module" src="script.js"></script>
 </body>
 </html>
-
