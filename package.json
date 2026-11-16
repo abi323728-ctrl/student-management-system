@@ -1,0 +1,20 @@
+{
+  "name": "login-page-project",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Simple interactive user login page with HTML, CSS, JavaScript, and Node.js server",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test test/**/*.test.js"
+  },
+  "keywords": [
+    "login",
+    "html",
+    "css",
+    "javascript",
+    "nodejs"
+  ],
+  "author": "",
+  "license": "ISC"
+}
