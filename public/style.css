@@ -1,43 +1,46 @@
 /* ==========================================================================
-   Sleek Enterprise Matte Dark - Professional Rectangular Login Stylesheet
+   Clean White Glow Theme with Rounded Square/Rectangular Card
    ========================================================================== */
 
 :root {
   --font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   
-  /* Professional Matte Dark Palette */
-  --bg-color: #0b0f17;
-  --card-bg: #111726;
-  --card-border: #1e293b;
+  /* Palette matching the image */
+  --bg-color: #ffffff;
+  --card-bg: #ffffff;
+  --card-border: #f1f5f9;
   
-  --text-main: #f1f5f9;
-  --text-muted: #94a3b8;
-  --text-subtle: #64748b;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --text-subtle: #94a3b8;
   
-  --primary: #2563eb;
-  --primary-hover: #1d4ed8;
-  --primary-focus-ring: rgba(37, 99, 235, 0.35);
+  --primary: #f97316;
+  --primary-hover: #ea580c;
+  --primary-focus-ring: rgba(249, 115, 22, 0.25);
   
-  --input-bg: #0b0f17;
-  --input-border: #26334d;
-  --input-focus-border: #3b82f6;
+  --input-bg: #f8fafc;
+  --input-border: #e2e8f0;
+  --input-focus-border: #f97316;
   
   --success: #10b981;
-  --success-bg: rgba(16, 185, 129, 0.1);
-  --success-border: rgba(16, 185, 129, 0.35);
+  --success-bg: #ecfdf5;
+  --success-border: #a7f3d0;
   
   --error: #ef4444;
-  --error-bg: rgba(239, 68, 68, 0.1);
-  --error-border: rgba(239, 68, 68, 0.35);
+  --error-bg: #fef2f2;
+  --error-border: #fecaca;
   
-  /* Crisp Rectangular Elevations */
-  --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.04);
+  /* Signature Warm Peach/Coral Glow from Image */
+  --card-glow-shadow: 
+    0 0 70px 15px rgba(251, 146, 60, 0.28),
+    0 0 120px 40px rgba(254, 215, 170, 0.35),
+    0 20px 35px -10px rgba(0, 0, 0, 0.06);
   
-  /* Rectangular Geometry */
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
-  --transition-fast: 0.15s ease;
+  /* Rounded Square/Rectangle Geometry */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --transition-fast: 0.18s ease;
 }
 
 * {
@@ -54,65 +57,62 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 32px 16px;
+  padding: 40px 20px;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Background - Clean & Neutral */
-.background-decorations {
-  display: none;
-}
-
-/* Page Container - Perfectly Centered */
+/* Page Container - Centered */
 .page-container {
   width: 100%;
-  max-width: 440px;
+  max-width: 450px;
   margin: auto;
 }
 
-/* Crisp Rectangular Card */
+/* Rounded Square/Rectangular Card with Warm Glow */
 .login-card {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: var(--radius-lg);
-  padding: 40px 36px;
-  box-shadow: var(--card-shadow);
+  padding: 42px 36px;
+  box-shadow: var(--card-glow-shadow);
+  position: relative;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 /* Card Header */
 .card-header {
   text-align: center;
-  margin-bottom: 28px;
+  margin-bottom: 26px;
 }
 
 .brand-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border-radius: var(--radius-md);
-  background: #1e293b;
-  border: 1px solid #334155;
-  color: #60a5fa;
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  border: 1px solid #fed7aa;
+  color: #ea580c;
   margin-bottom: 14px;
 }
 
 .brand-icon {
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
 }
 
 .card-title {
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   font-weight: 700;
   letter-spacing: -0.02em;
   margin-bottom: 6px;
-  color: #ffffff;
+  color: #0f172a;
 }
 
 .card-subtitle {
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   color: var(--text-muted);
   line-height: 1.45;
 }
@@ -132,13 +132,13 @@ body {
 .alert-banner.success {
   background: var(--success-bg);
   border: 1px solid var(--success-border);
-  color: #34d399;
+  color: #065f46;
 }
 
 .alert-banner.error {
   background: var(--error-bg);
   border: 1px solid var(--error-border);
-  color: #f87171;
+  color: #991b1b;
 }
 
 /* Form Groups */
@@ -155,9 +155,9 @@ body {
 
 .form-label {
   display: block;
-  font-size: 0.85rem;
+  font-size: 0.86rem;
   font-weight: 600;
-  color: #cbd5e1;
+  color: #1e293b;
   margin-bottom: 8px;
 }
 
@@ -167,17 +167,17 @@ body {
 
 .forgot-link {
   font-size: 0.82rem;
-  color: #60a5fa;
+  color: #ea580c;
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .forgot-link:hover {
   text-decoration: underline;
-  color: #93c5fd;
+  color: #c2410c;
 }
 
-/* Rectangular Inputs */
+/* Input Wrappers & Controls */
 .input-wrapper {
   position: relative;
   display: flex;
@@ -195,44 +195,45 @@ body {
 }
 
 .input-icon svg {
-  width: 17px;
-  height: 17px;
+  width: 18px;
+  height: 18px;
 }
 
 .form-input {
   width: 100%;
-  padding: 12px 42px 12px 42px;
+  padding: 13px 44px 13px 44px;
   background-color: var(--input-bg);
-  border: 1px solid var(--input-border);
+  border: 1.5px solid var(--input-border);
   border-radius: var(--radius-sm);
   color: var(--text-main);
   font-family: inherit;
-  font-size: 0.92rem;
+  font-size: 0.94rem;
   outline: none;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
 }
 
 .form-input::placeholder {
-  color: var(--text-subtle);
+  color: #94a3b8;
 }
 
 .form-input:focus {
+  background-color: #ffffff;
   border-color: var(--input-focus-border);
-  box-shadow: 0 0 0 3px var(--primary-focus-ring);
+  box-shadow: 0 0 0 3.5px var(--primary-focus-ring);
 }
 
 .input-wrapper:focus-within .input-icon {
-  color: #93c5fd;
+  color: #ea580c;
 }
 
 /* Input Status States */
 .form-group.has-error .form-input {
   border-color: var(--error);
-  background-color: rgba(239, 68, 68, 0.04);
+  background-color: #fffaf0;
 }
 
 .form-group.has-error .form-input:focus {
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25);
+  box-shadow: 0 0 0 3.5px rgba(239, 68, 68, 0.2);
 }
 
 .form-group.has-success .form-input {
@@ -240,7 +241,7 @@ body {
 }
 
 .form-group.has-success .form-input:focus {
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
+  box-shadow: 0 0 0 3.5px rgba(16, 185, 129, 0.2);
 }
 
 /* Status & Password Toggle Icons */
@@ -254,7 +255,7 @@ body {
 
 .toggle-password-btn {
   position: absolute;
-  right: 6px;
+  right: 8px;
   background: transparent;
   border: none;
   color: var(--text-subtle);
@@ -268,26 +269,27 @@ body {
 
 .toggle-password-btn:hover {
   color: var(--text-main);
-  background: #1e293b;
+  background: #f1f5f9;
 }
 
 .toggle-password-btn svg {
-  width: 17px;
-  height: 17px;
+  width: 18px;
+  height: 18px;
 }
 
 /* Error Text */
 .field-error {
   min-height: 18px;
-  font-size: 0.8rem;
-  color: #f87171;
+  font-size: 0.82rem;
+  color: #dc2626;
   margin-top: 6px;
+  font-weight: 500;
 }
 
-/* Password Checklist Box */
+/* Password Helper Checklist */
 .password-rules {
-  background: #0d121c;
-  border: 1px solid #1e293b;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   border-radius: var(--radius-sm);
   padding: 10px 14px;
   margin-top: 8px;
@@ -295,7 +297,7 @@ body {
 }
 
 .rules-title {
-  color: var(--text-muted);
+  color: #475569;
   font-weight: 600;
   margin-bottom: 6px;
 }
@@ -308,7 +310,7 @@ body {
 }
 
 .rule-item {
-  color: var(--text-subtle);
+  color: #94a3b8;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -316,7 +318,7 @@ body {
 
 .rule-item.valid {
   color: var(--success);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .rule-item.valid .rule-bullet::before {
@@ -353,31 +355,32 @@ body {
 }
 
 .checkmark {
-  width: 16px;
-  height: 16px;
-  background-color: var(--input-bg);
-  border: 1px solid var(--input-border);
-  border-radius: 3px;
+  width: 17px;
+  height: 17px;
+  background-color: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 4px;
   margin-right: 9px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  transition: all var(--transition-fast);
 }
 
 .checkbox-container:hover input ~ .checkmark {
-  border-color: #3b82f6;
+  border-color: #ea580c;
 }
 
 .checkbox-container input:checked ~ .checkmark {
-  background-color: var(--primary);
-  border-color: var(--primary);
+  background-color: #ea580c;
+  border-color: #ea580c;
 }
 
 .checkmark::after {
   content: "";
   display: none;
-  width: 3.5px;
-  height: 7px;
+  width: 4px;
+  height: 8px;
   border: solid #ffffff;
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
@@ -389,31 +392,38 @@ body {
 }
 
 .checkbox-label {
-  font-size: 0.84rem;
-  color: var(--text-muted);
+  font-size: 0.86rem;
+  color: #475569;
 }
 
-/* Rectangular Submit Button */
+/* Submit Button */
 .btn-submit {
   width: 100%;
-  padding: 13px;
-  background-color: var(--primary);
-  border: 1px solid #1d4ed8;
+  padding: 14px;
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  border: none;
   border-radius: var(--radius-sm);
   color: #ffffff;
   font-family: inherit;
-  font-size: 0.94rem;
+  font-size: 0.96rem;
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  transition: background-color var(--transition-fast);
+  box-shadow: 0 4px 14px rgba(234, 88, 12, 0.3);
+  transition: all var(--transition-fast);
 }
 
 .btn-submit:hover:not(:disabled) {
-  background-color: var(--primary-hover);
+  background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
+  box-shadow: 0 6px 20px rgba(234, 88, 12, 0.4);
+  transform: translateY(-1px);
+}
+
+.btn-submit:active:not(:disabled) {
+  transform: translateY(1px);
 }
 
 .btn-submit:disabled {
@@ -425,7 +435,7 @@ body {
 .btn-spinner {
   width: 16px;
   height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.4);
   border-top-color: #ffffff;
   border-radius: 50%;
   animation: spin 0.75s linear infinite;
@@ -450,8 +460,8 @@ body {
 .demo-box {
   margin-top: 22px;
   padding: 12px 14px;
-  background: #0d121c;
-  border: 1px dashed #26334d;
+  background: #fff7ed;
+  border: 1px dashed #fdba74;
   border-radius: var(--radius-sm);
 }
 
@@ -461,21 +471,21 @@ body {
   gap: 7px;
   font-size: 0.8rem;
   font-weight: 600;
-  color: #60a5fa;
+  color: #c2410c;
   margin-bottom: 4px;
 }
 
 .demo-text {
   font-size: 0.76rem;
-  color: var(--text-muted);
+  color: #7c2d12;
   margin-bottom: 8px;
 }
 
 .btn-fill-demo {
-  background: #1e293b;
-  border: 1px solid #334155;
+  background: #ffedd5;
+  border: 1px solid #fed7aa;
   border-radius: var(--radius-sm);
-  color: #cbd5e1;
+  color: #9a3412;
   font-size: 0.76rem;
   font-weight: 600;
   padding: 6px 12px;
@@ -483,37 +493,38 @@ body {
 }
 
 .btn-fill-demo:hover {
-  background: #27354a;
-  color: #ffffff;
+  background: #fed7aa;
+  color: #7c2d12;
 }
 
 /* Card Footer */
 .card-footer {
   text-align: center;
   margin-top: 24px;
-  font-size: 0.84rem;
+  font-size: 0.86rem;
   color: var(--text-muted);
 }
 
 .signup-link {
-  color: #60a5fa;
+  color: #ea580c;
   text-decoration: none;
   font-weight: 600;
 }
 
 .signup-link:hover {
   text-decoration: underline;
-  color: #93c5fd;
+  color: #c2410c;
 }
 
 /* Mobile responsive */
 @media (max-width: 480px) {
   body {
-    padding: 16px 12px;
+    padding: 20px 14px;
   }
   
   .login-card {
     padding: 28px 20px;
+    border-radius: 14px;
   }
   
   .rules-list {
