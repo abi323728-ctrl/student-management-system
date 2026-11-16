@@ -1,13 +1,8 @@
-import { test, describe, before, after } from 'node:test';
+import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
-import server from '../server.js';
 
 describe('Server & Endpoints Integration Suite', () => {
   const BASE_URL = 'http://localhost:3000';
-
-  after(() => {
-    server.close();
-  });
 
   test('GET / serves index.html with 200 OK', async () => {
     const res = await fetch(`${BASE_URL}/`);
@@ -59,3 +54,4 @@ describe('Server & Endpoints Integration Suite', () => {
     assert.match(data.message, /Authentication successful/);
   });
 });
+

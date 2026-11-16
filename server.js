@@ -128,11 +128,22 @@ const server = http.createServer(async (req, res) => {
   res.end('405 Method Not Allowed');
 });
 
-server.listen(PORT, () => {
-  console.log(`===============================================`);
-  console.log(`🚀 NextLogic Login Server running on localhost!`);
-  console.log(`👉 Open URL: http://localhost:${PORT}`);
-  console.log(`===============================================`);
-});
+const isDirectRun = process.argv[1] && (path.resolve(process.argv[1]) === path.resolve(fileURLToPath(import.meta.url)));
+
+if (isDirectRun || process.env.NODE_ENV !== 'test') {
+  server.listen(PORT, () => {
+    console.log(`===============================================`);
+    console.log(`🚀 NextLogic Login Server running on localhost!`);
+    console.log(`👉 Open URL: http://localhost:${PORT}`);
+    console.log(`===============================================`);
+  }).on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.log(`Note: Port ${PORT} is already in use by an active server.`);
+    } else {
+      throw err;
+    }
+  });
+}
 
 export default server;
+

@@ -102,3 +102,4 @@ You can test the application using:
 - **Password**: `NextLogic@2026`
 
 *(Or click the **"Autofill Test Credentials"** button right inside the login card!)*
+

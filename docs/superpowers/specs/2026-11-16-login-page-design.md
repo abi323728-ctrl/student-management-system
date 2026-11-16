@@ -12,3 +12,4 @@ A modern, responsive, accessible, and interactive user login page built using pu
 - **Localhost Server**: Express static server serving `public/` on port 3000, plus a mock `/api/login` endpoint that validates authentication credentials and returns JSON status.
 - **Automated Testing**: Node.js built-in test runner (`node:test` and `node:assert`) validating all validation rules against edge cases.
 - **Documentation**: A detailed `README.md` step-by-step installation and running guide ready for mentor review.
+

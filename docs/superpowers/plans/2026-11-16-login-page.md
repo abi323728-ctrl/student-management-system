@@ -30,3 +30,4 @@
 ### Manual Verification
 - Start server with `npm start` or Node.
 - Probe `http://localhost:3000` to confirm HTML, CSS, JS, and `/api/login` route work as expected.
+
