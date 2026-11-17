@@ -59,15 +59,63 @@
       const [passwordForm, setPasswordForm] = useState({ current_password: '', new_password: '', confirm_password: '' });
       const [msg, setMsg] = useState(null);
 
-      // Interactive Particular Semester Credits & GPA Evaluator State
-      const [calcSemester, setCalcSemester] = useState('Semester 5');
-      const [evalCourses, setEvalCourses] = useState([
-        { name: 'Data Structures & Algorithms', credits: 4, grade: 'A+' },
-        { name: 'Database Management Systems', credits: 4, grade: 'O' },
-        { name: 'Web Technologies & Frameworks', credits: 3, grade: 'O' },
-        { name: 'Cloud Computing & DevOps', credits: 3, grade: 'A' },
-      ]);
-      const [semesterResult, setSemesterResult] = useState(null);
+      // Interactive Semester Catalog for Semester 1 to Semester 8
+      const semesterCatalog = {
+        'Semester 1': [
+          { name: 'Technical English & Professional Communication', credits: 3, grade: 'A' },
+          { name: 'Engineering Mathematics I (Calculus & Linear Algebra)', credits: 4, grade: 'A+' },
+          { name: 'Engineering Physics & Materials Science', credits: 4, grade: 'O' },
+          { name: 'Problem Solving and Python Programming', credits: 4, grade: 'O' },
+          { name: 'Basic Electrical & Electronics Lab', credits: 2, grade: 'A+' }
+        ],
+        'Semester 2': [
+          { name: 'Engineering Mathematics II (Differential Equations)', credits: 4, grade: 'A+' },
+          { name: 'Programming in C & Data Structures', credits: 4, grade: 'O' },
+          { name: 'Digital Principles and System Design', credits: 3, grade: 'A' },
+          { name: 'Environmental Science and Engineering', credits: 3, grade: 'A+' },
+          { name: 'Programming in C Laboratory', credits: 2, grade: 'O' }
+        ],
+        'Semester 3': [
+          { name: 'Discrete Mathematics and Graph Theory', credits: 4, grade: 'A' },
+          { name: 'Object-Oriented Programming (Java)', credits: 4, grade: 'O' },
+          { name: 'Computer Organization and Architecture', credits: 3, grade: 'A+' },
+          { name: 'Database Management Systems', credits: 4, grade: 'O' },
+          { name: 'Data Structures and Algorithms Lab', credits: 2, grade: 'O' }
+        ],
+        'Semester 4': [
+          { name: 'Probability, Statistics & Numerical Methods', credits: 4, grade: 'A+' },
+          { name: 'Operating Systems & Kernel Design', credits: 4, grade: 'A' },
+          { name: 'Design and Analysis of Algorithms', credits: 4, grade: 'O' },
+          { name: 'Software Engineering & Agile Methodologies', credits: 3, grade: 'A+' },
+          { name: 'Operating Systems and Networks Lab', credits: 2, grade: 'O' }
+        ],
+        'Semester 5': [
+          { name: 'Data Structures & Advanced Algorithms', credits: 4, grade: 'A+' },
+          { name: 'Database Management Systems', credits: 4, grade: 'O' },
+          { name: 'Web Technologies & Frameworks', credits: 3, grade: 'O' },
+          { name: 'Cloud Computing & DevOps Architecture', credits: 3, grade: 'A' },
+          { name: 'Full-Stack Development Laboratory', credits: 2, grade: 'O' }
+        ],
+        'Semester 6': [
+          { name: 'Artificial Intelligence & Machine Learning', credits: 4, grade: 'O' },
+          { name: 'Cryptography and Network Security', credits: 3, grade: 'A+' },
+          { name: 'Compiler Design & Theory of Computation', credits: 4, grade: 'A' },
+          { name: 'Mobile Application Development (Flutter/React Native)', credits: 3, grade: 'O' },
+          { name: 'AI & Machine Learning Laboratory', credits: 2, grade: 'O' }
+        ],
+        'Semester 7': [
+          { name: 'Deep Learning & Neural Network Architectures', credits: 4, grade: 'O' },
+          { name: 'Internet of Things & Embedded Systems', credits: 3, grade: 'A+' },
+          { name: 'Big Data Analytics & Data Warehousing', credits: 3, grade: 'A' },
+          { name: 'Professional Elective: Blockchain & Web3', credits: 3, grade: 'O' },
+          { name: 'Capstone Project Work (Phase I)', credits: 3, grade: 'O' }
+        ],
+        'Semester 8': [
+          { name: 'Capstone Degree Project (Phase II)', credits: 8, grade: 'O' },
+          { name: 'Professional Ethics in Engineering', credits: 2, grade: 'A+' },
+          { name: 'Industry Internship & Technical Seminar', credits: 4, grade: 'O' }
+        ]
+      };
 
       const gradePoints = {
         'O': 10,
@@ -79,27 +127,19 @@
         'U': 0
       };
 
-      const handleAddCourseRow = () => {
-        setEvalCourses([...evalCourses, { name: 'Elective / Lab Course', credits: 3, grade: 'A+' }]);
-      };
+      const possibleGrades = ['O', 'A+', 'A', 'B+', 'B'];
 
-      const handleRemoveCourseRow = (index) => {
-        if (evalCourses.length <= 1) return;
-        setEvalCourses(evalCourses.filter((_, i) => i !== index));
-      };
+      // Interactive Particular Semester Credits & GPA Evaluator State
+      const [calcSemester, setCalcSemester] = useState('Semester 5');
+      const [evalCourses, setEvalCourses] = useState(semesterCatalog['Semester 5']);
+      const [semesterResult, setSemesterResult] = useState(null);
 
-      const handleCourseChange = (index, field, value) => {
-        const updated = [...evalCourses];
-        updated[index][field] = field === 'credits' ? Number(value) : value;
-        setEvalCourses(updated);
-      };
-
-      const computeSemesterResult = () => {
+      const computeResultForCourses = (semName, coursesList) => {
         let totalCredits = 0;
         let totalWeightedPoints = 0;
         let hasArrears = false;
 
-        evalCourses.forEach(c => {
+        coursesList.forEach(c => {
           const cred = Number(c.credits) || 0;
           const gp = gradePoints[c.grade] !== undefined ? gradePoints[c.grade] : 8;
           if (c.grade === 'U') hasArrears = true;
@@ -129,13 +169,55 @@
         }
 
         setSemesterResult({
-          semester: calcSemester,
+          semester: semName,
           totalCredits,
           sgpa: sgpa.toFixed(2),
           totalPoints: totalWeightedPoints,
           standing,
           badgeColor
         });
+      };
+
+      const handleAddCourseRow = () => {
+        setEvalCourses([...evalCourses, { name: 'Elective / Lab Course', credits: 3, grade: 'A+' }]);
+      };
+
+      const handleRemoveCourseRow = (index) => {
+        if (evalCourses.length <= 1) return;
+        setEvalCourses(evalCourses.filter((_, i) => i !== index));
+      };
+
+      const handleCourseChange = (index, field, value) => {
+        const updated = [...evalCourses];
+        updated[index][field] = field === 'credits' ? Number(value) : value;
+        setEvalCourses(updated);
+      };
+
+      const computeSemesterResult = () => {
+        computeResultForCourses(calcSemester, evalCourses);
+      };
+
+      // Randomize grades for a specific semester
+      const randomizeForSemester = (semName) => {
+        const baseCourses = semesterCatalog[semName] || semesterCatalog['Semester 1'];
+        const randomized = baseCourses.map(course => {
+          const randomGrade = possibleGrades[Math.floor(Math.random() * possibleGrades.length)];
+          return {
+            ...course,
+            grade: randomGrade
+          };
+        });
+        setCalcSemester(semName);
+        setEvalCourses(randomized);
+        computeResultForCourses(semName, randomized);
+      };
+
+      // Pick random semester 1 to 8
+      const handleRandomSemester = () => {
+        const semesters = ['Semester 1', 'Semester 2', 'Semester 3', 'Semester 4', 'Semester 5', 'Semester 6', 'Semester 7', 'Semester 8'];
+        const randomSem = semesters[Math.floor(Math.random() * semesters.length)];
+        randomizeForSemester(randomSem);
+
       };
 
       useEffect(() => {
@@ -402,21 +484,30 @@
 
                 {/* INTERACTIVE SEMESTER CREDITS & FINAL RESULT EVALUATOR */}
                 <div className="bg-white rounded-2xl border border-orange-200/80 card-warm-glow p-6">
-                  <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3 pb-4 border-b border-orange-100 mb-5">
+                  <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3 pb-4 border-b border-orange-100 mb-4">
                     <div>
                       <h3 className="font-extrabold text-stone-900 text-lg">Semester Credits & Result Evaluator</h3>
                       <p className="text-xs text-[#9a3412] font-medium mt-0.5">
-                        Select a particular semester, enter your courses, credits and grades to compute your official final result
+                        Select any semester (Sem 1 to 8) or randomize to evaluate your credits, grades, and official final standing
                       </p>
                     </div>
 
-                    {/* Particular Semester Selector */}
-                    <div className="flex items-center gap-2 bg-[#fff7ed] px-3 py-1.5 rounded-xl border border-[#fed7aa]">
-                      <label className="text-xs font-bold text-[#7c2d12]">Select Semester:</label>
+                    <div className="flex items-center gap-2">
+                      {/* Randomizer Button */}
+                      <button
+                        type="button"
+                        onClick={handleRandomSemester}
+                        className="px-3 py-1.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold text-xs rounded-xl shadow-xs transition flex items-center gap-1.5"
+                      >
+                        <span>🎲</span>
+                        <span>Random Sem 1–8</span>
+                      </button>
+
+                      {/* Dropdown Selector */}
                       <select
                         value={calcSemester}
-                        onChange={(e) => { setCalcSemester(e.target.value); setSemesterResult(null); }}
-                        className="bg-white border border-[#fed7aa] px-2.5 py-1 rounded-lg text-xs font-black text-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer shadow-2xs"
+                        onChange={(e) => randomizeForSemester(e.target.value)}
+                        className="bg-[#fff7ed] border border-[#fed7aa] px-3 py-1.5 rounded-xl text-xs font-black text-[#7c2d12] focus:outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer shadow-2xs"
                       >
                         <option>Semester 1</option>
                         <option>Semester 2</option>
@@ -428,6 +519,25 @@
                         <option>Semester 8</option>
                       </select>
                     </div>
+                  </div>
+
+                  {/* Quick Semester 1 to Semester 8 Selection Pills */}
+                  <div className="flex flex-wrap items-center gap-1.5 mb-5 p-2 bg-[#fff7ed]/60 rounded-xl border border-[#fed7aa]/70">
+                    <span className="text-[11px] font-black uppercase text-[#c2410c] mr-1 ml-1">Semesters:</span>
+                    {['Semester 1', 'Semester 2', 'Semester 3', 'Semester 4', 'Semester 5', 'Semester 6', 'Semester 7', 'Semester 8'].map((sem, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => randomizeForSemester(sem)}
+                        className={`px-2.5 py-1 text-xs font-extrabold rounded-lg transition ${
+                          calcSemester === sem
+                            ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-xs'
+                            : 'bg-white hover:bg-orange-100/60 text-stone-700 border border-[#fed7aa]/60'
+                        }`}
+                      >
+                        Sem {i + 1}
+                      </button>
+                    ))}
                   </div>
 
                   {/* Course / Credits / Grade Input Rows */}
@@ -458,6 +568,7 @@
                             <option value="3">3 Credits</option>
                             <option value="4">4 Credits</option>
                             <option value="5">5 Credits</option>
+                            <option value="8">8 Credits (Project)</option>
                           </select>
                         </div>
                         <div className="w-1/4 flex items-center gap-2 justify-end">
@@ -488,14 +599,23 @@
                       </div>
                     ))}
 
-                    <div className="flex items-center justify-between pt-2">
-                      <button
-                        type="button"
-                        onClick={handleAddCourseRow}
-                        className="px-3.5 py-1.5 bg-white border border-stone-300 hover:border-orange-400 text-stone-700 text-xs font-bold rounded-lg shadow-2xs transition flex items-center gap-1.5"
-                      >
-                        <span>+</span> Add Course in {calcSemester}
-                      </button>
+                    <div className="flex flex-wrap items-center justify-between gap-2 pt-2">
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={handleAddCourseRow}
+                          className="px-3.5 py-1.5 bg-white border border-stone-300 hover:border-orange-400 text-stone-700 text-xs font-bold rounded-lg shadow-2xs transition flex items-center gap-1.5"
+                        >
+                          <span>+</span> Add Course
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => randomizeForSemester(calcSemester)}
+                          className="px-3.5 py-1.5 bg-orange-50 border border-orange-200 hover:bg-orange-100 text-orange-700 text-xs font-bold rounded-lg shadow-2xs transition flex items-center gap-1"
+                        >
+                          <span>🎲</span> Shuffle Grades
+                        </button>
+                      </div>
 
                       <button
                         type="button"
