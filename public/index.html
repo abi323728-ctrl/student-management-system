@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CAMPUSCORE | Digital Campus Platform</title>
+  <title>CAMPUSCORE | Connecting Campus. Empowering Futures.</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- React 18 & ReactDOM -->
@@ -34,42 +34,50 @@
     }
   </script>
   <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #ffffff; }
-    .auth-warm-glow {
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #ffffff; scroll-behavior: smooth; }
+    .card-warm-glow {
       box-shadow: 
-        0 0 50px 12px rgba(251, 146, 60, 0.22),
-        0 0 90px 30px rgba(254, 215, 170, 0.28),
-        0 15px 30px -10px rgba(0, 0, 0, 0.05);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+        0 0 70px 18px rgba(251, 146, 60, 0.28),
+        0 0 130px 45px rgba(254, 215, 170, 0.35),
+        0 20px 40px -10px rgba(0, 0, 0, 0.06);
     }
-    .auth-warm-glow:hover {
+    .logo-hero-glow {
       box-shadow: 
-        0 0 60px 16px rgba(251, 146, 60, 0.28),
-        0 0 110px 35px rgba(254, 215, 170, 0.35),
-        0 20px 35px -10px rgba(0, 0, 0, 0.08);
+        0 0 50px 15px rgba(251, 146, 60, 0.32),
+        0 15px 35px -5px rgba(0, 0, 0, 0.1);
+    }
+    .stat-card-hover {
+      transition: all 0.2s ease-in-out;
+    }
+    .stat-card-hover:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 24px -6px rgba(234, 88, 12, 0.15);
     }
   </style>
 </head>
-<body class="bg-white text-slate-800 min-h-screen p-4 sm:p-8 antialiased flex flex-col justify-center">
-  <div id="root" class="w-full max-w-7xl mx-auto"></div>
+<body class="bg-white text-slate-800 min-h-screen flex flex-col justify-between antialiased selection:bg-orange-100 selection:text-orange-900">
+  
+  <div id="root"></div>
 
   <!-- Shared Auth & API Script -->
   <script src="/static/app.js"></script>
 
-  <!-- React 3-Box Application -->
+  <!-- React Main Front Dashboard & Merged 1-Box Auth Component -->
   <script type="text/babel">
     const { useState, useEffect } = React;
 
-    function ThreeBoxAuthApp() {
-      const [loading, setLoading] = useState(null); // 'student-login' | 'student-register' | 'admin-login' | null
+    function MainCampusDashboard() {
+      const [activeTab, setActiveTab] = useState('student-login'); // 'student-login' | 'student-register' | 'admin-login'
+      const [loading, setLoading] = useState(false);
       const [alert, setAlert] = useState(null);
-      const [showStudentPass, setShowStudentPass] = useState(false);
-      const [showAdminPass, setShowAdminPass] = useState(false);
+      const [showPassword, setShowPassword] = useState(false);
+      const [session, setSession] = useState({ token: null, role: null, user: null });
+      const [stats, setStats] = useState({ total_students: 1248, departments: 5, avg_cgpa: '8.72', placement: '98.4%' });
 
-      // Box 1: Student Login State
+      // Student Login State
       const [studentLogin, setStudentLogin] = useState({ email: '', password: '' });
 
-      // Box 2: Student Register State
+      // Student Register State
       const [studentReg, setStudentReg] = useState({
         name: '',
         student_id: '',
@@ -81,22 +89,42 @@
         confirm_password: ''
       });
 
-      // Box 3: Admin Login State
+      // Admin Login State
       const [adminLogin, setAdminLogin] = useState({ email: '', password: '' });
 
       useEffect(() => {
+        // Check current session without forced auto-redirection so user can view front dashboard
         const token = window.auth.getToken();
         const role = window.auth.getRole();
-        if (token && role === 'admin') window.location.href = '/admin';
-        if (token && role === 'student') window.location.href = '/student';
+        const user = window.auth.getUser();
+        if (token && role) {
+          setSession({ token, role, user });
+        }
+
+        // Fetch live stats from API if accessible
+        fetch('/api/admin/stats', {
+          headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+        })
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+          if (data && data.total_students !== undefined) {
+            setStats(prev => ({
+              ...prev,
+              total_students: data.total_students,
+              departments: Object.keys(data.department_breakdown || {}).length || 5,
+              avg_cgpa: (data.average_cgpa || 8.72).toFixed(2)
+            }));
+          }
+        })
+        .catch(() => {});
       }, []);
 
       const showAlert = (message, type = 'error') => {
         setAlert({ message, type });
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        const formEl = document.getElementById('auth-form-card');
+        if (formEl) formEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
       };
 
-      // Handler: Student Login
       const handleStudentLogin = async (e) => {
         e.preventDefault();
         setAlert(null);
@@ -105,20 +133,19 @@
           return;
         }
 
-        setLoading('student-login');
+        setLoading(true);
         try {
           const res = await window.api.loginStudent(studentLogin.email, studentLogin.password);
           window.auth.setSession(res.access_token, res.role, res.user);
-          showAlert('Student login successful! Redirecting...', 'success');
+          showAlert('Login successful! Redirecting to Student Dashboard...', 'success');
           setTimeout(() => { window.location.href = '/student'; }, 800);
         } catch (err) {
           showAlert(err.message);
         } finally {
-          setLoading(null);
+          setLoading(false);
         }
       };
 
-      // Handler: Student Register
       const handleStudentRegister = async (e) => {
         e.preventDefault();
         setAlert(null);
@@ -136,7 +163,7 @@
           return;
         }
 
-        setLoading('student-register');
+        setLoading(true);
         try {
           const res = await window.api.registerStudent({
             name: studentReg.name,
@@ -148,16 +175,15 @@
             password: studentReg.password
           });
           window.auth.setSession(res.access_token, res.role, res.user);
-          showAlert('Student registered and authenticated! Redirecting...', 'success');
+          showAlert('Registration successful! Redirecting to Student Dashboard...', 'success');
           setTimeout(() => { window.location.href = '/student'; }, 1000);
         } catch (err) {
           showAlert(err.message);
         } finally {
-          setLoading(null);
+          setLoading(false);
         }
       };
 
-      // Handler: Admin Login
       const handleAdminLogin = async (e) => {
         e.preventDefault();
         setAlert(null);
@@ -166,7 +192,7 @@
           return;
         }
 
-        setLoading('admin-login');
+        setLoading(true);
         try {
           const res = await window.api.loginAdmin(adminLogin.email, adminLogin.password);
           window.auth.setSession(res.access_token, res.role, res.user);
@@ -175,352 +201,668 @@
         } catch (err) {
           showAlert(err.message);
         } finally {
-          setLoading(null);
+          setLoading(false);
+        }
+      };
+
+      const scrollToAuth = (tabName) => {
+        setActiveTab(tabName);
+        setAlert(null);
+        const card = document.getElementById('auth-form-card');
+        if (card) {
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
       };
 
       return (
         <div>
-          {/* Top Brand Showcase Banner */}
-          <header className="text-center mb-8 sm:mb-10">
-            <div className="inline-flex items-center gap-3 p-2 px-5 rounded-full bg-[#fff7ed] border border-[#fed7aa] shadow-xs mb-3">
-              <img src="/static/campuscore-logo.png" alt="CAMPUSCORE" className="w-9 h-9 rounded-full border border-white shadow-xs object-cover" />
-              <span className="text-xs font-extrabold tracking-wider uppercase text-[#c2410c]">CAMPUSCORE PLATFORM</span>
+          {/* ========================================================
+              ACTIVE LOGGED-IN SESSION BANNER (IF APPLICABLE)
+             ======================================================== */}
+          {session.token && (
+            <div className="bg-[#fff7ed] border-b border-[#fed7aa] px-4 py-2 text-xs text-[#7c2d12] flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Active Session: <strong>{session.user?.name || session.role}</strong> ({session.role.toUpperCase()})</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <a
+                  href={session.role === 'admin' ? '/admin' : '/student'}
+                  className="font-bold text-orange-600 hover:text-orange-700 underline"
+                >
+                  Go to {session.role === 'admin' ? 'Admin Console' : 'Student Portal'} →
+                </a>
+                <button
+                  onClick={() => window.auth.logout()}
+                  className="text-stone-500 hover:text-rose-600 font-semibold"
+                >
+                  Sign Out
+                </button>
+              </div>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-[#7c2d12] tracking-tight">
-              CAMPUSCORE Student Management System
+          )}
+
+          {/* ========================================================
+              TOP NAVIGATION BAR
+             ======================================================== */}
+          <nav className="border-b border-[#fed7aa]/70 bg-white/95 backdrop-blur-md sticky top-0 z-50 px-4 sm:px-8 py-3 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <img
+                src="/static/campuscore-logo.png"
+                alt="CAMPUSCORE Emblem"
+                className="w-10 h-10 rounded-full border border-orange-400 object-cover shadow-xs bg-white"
+              />
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="font-extrabold text-stone-900 tracking-tight text-base sm:text-lg">CAMPUSCORE</span>
+                  <span className="hidden sm:inline-block text-[10px] font-extrabold uppercase tracking-wider text-orange-700 bg-[#fff7ed] px-2 py-0.5 rounded-full border border-[#fed7aa]">
+                    Digital Campus Platform
+                  </span>
+                </div>
+                <p className="text-[10px] text-stone-500 font-medium hidden md:block">Next-Generation Student Management System</p>
+              </div>
+            </div>
+
+            {/* Nav Links */}
+            <div className="hidden lg:flex items-center gap-6 text-xs font-bold text-stone-600">
+              <a href="#dashboard-overview" className="hover:text-orange-600 transition">Campus Dashboard</a>
+              <a href="#live-metrics" className="hover:text-orange-600 transition">Live Metrics</a>
+              <a href="#academic-wings" className="hover:text-orange-600 transition">Departments</a>
+              <a href="#notice-board" className="hover:text-orange-600 transition">Notice Board</a>
+            </div>
+
+            {/* Quick Action Buttons */}
+            <div className="flex items-center gap-2 sm:gap-3">
+              <button
+                onClick={() => scrollToAuth('student-login')}
+                className="text-xs sm:text-sm font-bold text-stone-700 hover:text-orange-600 px-3 py-1.5 transition"
+              >
+                Student Portal
+              </button>
+              <button
+                onClick={() => scrollToAuth('admin-login')}
+                className="text-xs sm:text-sm font-bold text-stone-700 hover:text-orange-600 px-3 py-1.5 transition"
+              >
+                Admin Portal
+              </button>
+              <button
+                onClick={() => scrollToAuth('student-register')}
+                className="text-xs sm:text-sm font-bold bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-3.5 py-1.5 rounded-lg shadow-xs hover:shadow transition"
+              >
+                Register
+              </button>
+            </div>
+          </nav>
+
+          {/* ========================================================
+              MAIN FRONT DASHBOARD: HERO SHOWCASE
+             ======================================================== */}
+          <section id="dashboard-overview" className="px-4 sm:px-6 pt-12 sm:pt-16 pb-12 max-w-6xl mx-auto text-center">
+            
+            {/* Large Official Emblem with Halo Glow */}
+            <div className="inline-block relative mb-6">
+              <div className="p-2 rounded-full bg-gradient-to-tr from-orange-400 via-amber-200 to-orange-500 logo-hero-glow">
+                <img
+                  src="/static/campuscore-logo.png"
+                  alt="CAMPUSCORE Official Symbol"
+                  className="w-40 h-40 sm:w-48 sm:h-48 rounded-full border-4 border-white object-cover mx-auto bg-white"
+                />
+              </div>
+              <div className="absolute -bottom-3 inset-x-0 flex justify-center">
+                <span className="bg-[#fff7ed] text-[#c2410c] text-[11px] sm:text-xs font-extrabold uppercase tracking-widest px-4 py-1 rounded-full border border-[#fed7aa] shadow-xs">
+                  Official Campus Dashboard
+                </span>
+              </div>
+            </div>
+
+            {/* Title & Official Tagline */}
+            <h1 className="text-3xl sm:text-5xl font-black text-[#7c2d12] tracking-tight leading-tight mb-2 mt-4">
+              CAMPUSCORE
             </h1>
-            <p className="text-sm text-[#9a3412] font-semibold mt-1 max-w-xl mx-auto">
-              Digital Campus Platform • Choose your dedicated authentication portal below.
+            
+            <div className="inline-block mb-4">
+              <p className="text-xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-600 via-amber-600 to-orange-500 tracking-tight">
+                “Connecting Campus. Empowering Futures.”
+              </p>
+            </div>
+
+            <p className="text-sm sm:text-base text-stone-600 max-w-2xl mx-auto leading-relaxed mb-8">
+              A comprehensive digital campus operating system connecting students, faculty, and administration. Seamlessly managing academic journeys, real-time records, and institutional governance.
             </p>
 
-            {/* Alert Message Banner */}
-            {alert && (
-              <div className={`mt-5 max-w-2xl mx-auto p-4 rounded-xl text-sm flex items-center justify-center gap-2 border font-bold ${
-                alert.type === 'success' 
-                  ? 'bg-emerald-50 text-emerald-800 border-emerald-200' 
-                  : 'bg-rose-50 text-rose-800 border-rose-200'
-              }`}>
-                <span>{alert.type === 'success' ? '✓' : '⚠'}</span>
-                <span>{alert.message}</span>
-              </div>
-            )}
-          </header>
+            {/* Front Dashboard Quick Launch Actions */}
+            <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-14">
+              <button
+                onClick={() => scrollToAuth('student-login')}
+                className="px-5 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-extrabold text-sm shadow-md hover:shadow-lg transition flex items-center gap-2"
+              >
+                <span>🎓</span>
+                <span>Enter Student Portal</span>
+              </button>
 
-          {/* Three Separate Boxes Grid */}
-          <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 items-start">
+              <button
+                onClick={() => scrollToAuth('student-register')}
+                className="px-5 py-3 rounded-xl bg-white hover:bg-orange-50/60 text-[#7c2d12] border-2 border-[#fed7aa] font-extrabold text-sm shadow-xs hover:shadow transition flex items-center gap-2"
+              >
+                <span>📝</span>
+                <span>New Student Admission</span>
+              </button>
+
+              <button
+                onClick={() => scrollToAuth('admin-login')}
+                className="px-5 py-3 rounded-xl bg-stone-900 hover:bg-stone-800 text-white font-extrabold text-sm shadow-md hover:shadow-lg transition flex items-center gap-2"
+              >
+                <span>🛡️</span>
+                <span>Admin Control Center</span>
+              </button>
+            </div>
+
+            {/* ========================================================
+                LIVE CAMPUS METRICS & ANALYTICS DASHBOARD
+               ======================================================== */}
+            <div id="live-metrics" className="grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto mb-16 text-left">
+              
+              <div className="p-5 rounded-2xl bg-gradient-to-br from-[#fff7ed] to-white border border-[#fed7aa] stat-card-hover">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-extrabold text-[#c2410c] uppercase tracking-wider">Active Students</span>
+                  <span className="text-xl">🎓</span>
+                </div>
+                <p className="text-2xl sm:text-3xl font-black text-[#7c2d12]">{stats.total_students}</p>
+                <p className="text-xs text-[#9a3412] font-semibold mt-1">Enrolled & Verified</p>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-gradient-to-br from-[#fff7ed] to-white border border-[#fed7aa] stat-card-hover">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-extrabold text-[#c2410c] uppercase tracking-wider">Academic Wings</span>
+                  <span className="text-xl">🏛️</span>
+                </div>
+                <p className="text-2xl sm:text-3xl font-black text-[#7c2d12]">{stats.departments}</p>
+                <p className="text-xs text-[#9a3412] font-semibold mt-1">Specialized Faculties</p>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-gradient-to-br from-[#fff7ed] to-white border border-[#fed7aa] stat-card-hover">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-extrabold text-[#c2410c] uppercase tracking-wider">Curriculum Scale</span>
+                  <span className="text-xl">📊</span>
+                </div>
+                <p className="text-2xl sm:text-3xl font-black text-[#7c2d12]">{stats.avg_cgpa}</p>
+                <p className="text-xs text-[#9a3412] font-semibold mt-1">10.0 CGPA CBCS Rating</p>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-gradient-to-br from-[#fff7ed] to-white border border-[#fed7aa] stat-card-hover">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-extrabold text-[#c2410c] uppercase tracking-wider">Placement Rate</span>
+                  <span className="text-xl">💼</span>
+                </div>
+                <p className="text-2xl sm:text-3xl font-black text-[#7c2d12]">{stats.placement}</p>
+                <p className="text-xs text-[#9a3412] font-semibold mt-1">Institutional Career Index</p>
+              </div>
+
+            </div>
+
+            {/* ========================================================
+                CAMPUS NOTICE BOARD & SYSTEM LIVE FEED
+               ======================================================== */}
+            <div id="notice-board" className="max-w-4xl mx-auto mb-16 text-left">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">📢</span>
+                  <h3 className="font-extrabold text-stone-900 text-base sm:text-lg">Campus Notice Board & Live Alerts</h3>
+                </div>
+                <span className="text-xs font-bold text-orange-600 bg-orange-50 px-2.5 py-1 rounded-full border border-orange-200">Live Campus Feed</span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="p-4 rounded-xl border border-stone-200 bg-white shadow-xs hover:border-orange-300 transition">
+                  <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">Academic</span>
+                  <h4 className="font-bold text-sm text-stone-900 mt-2 mb-1">Semester End Examinations</h4>
+                  <p className="text-xs text-stone-600 leading-relaxed">Hall tickets and examination timetable have been uploaded to student portal dashboards.</p>
+                </div>
+
+                <div className="p-4 rounded-xl border border-stone-200 bg-white shadow-xs hover:border-orange-300 transition">
+                  <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">Admissions</span>
+                  <h4 className="font-bold text-sm text-stone-900 mt-2 mb-1">2026 Admissions Open</h4>
+                  <p className="text-xs text-stone-600 leading-relaxed">Direct student registration is active for Computer Science, IT, and AI & Data Science programs.</p>
+                </div>
+
+                <div className="p-4 rounded-xl border border-stone-200 bg-white shadow-xs hover:border-orange-300 transition">
+                  <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200">Security</span>
+                  <h4 className="font-bold text-sm text-stone-900 mt-2 mb-1">Role-Based JWT Security</h4>
+                  <p className="text-xs text-stone-600 leading-relaxed">End-to-end token authentication safeguards personal profiles and institutional database records.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* ========================================================
+                ACADEMIC DEPARTMENTS DIRECTORY
+               ======================================================== */}
+            <div id="academic-wings" className="max-w-4xl mx-auto mb-16 text-left">
+              <h3 className="font-extrabold text-stone-900 text-base sm:text-lg mb-3">Academic Programs & Faculty Wings</h3>
+              <div className="flex flex-wrap gap-2">
+                {['Computer Science & Engineering', 'Information Technology', 'AI & Data Science', 'Electronics & Communication', 'Mechanical & Automation'].map((dept, i) => (
+                  <span key={i} className="px-3.5 py-1.5 rounded-lg bg-[#fff7ed] border border-[#fed7aa] text-xs font-bold text-[#7c2d12] shadow-2xs">
+                    🏛️ {dept}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+          </section>
+
+          {/* ========================================================
+              MERGED 1-BOX AUTHENTICATION PORTAL (CENTERED SINGLE BOX)
+             ======================================================== */}
+          <section id="auth-form-card" className="px-4 pb-20 max-w-4xl mx-auto w-full">
             
-            {/* ========================================================
-                BOX 1: STUDENT LOGIN
-               ======================================================== */}
-            <div className="bg-white rounded-2xl border border-[#fed7aa] auth-warm-glow p-6 sm:p-7 flex flex-col justify-between">
-              <div>
-                {/* Box Header */}
-                <div className="flex items-center gap-3 pb-4 border-b border-orange-100 mb-5">
-                  <div className="w-10 h-10 rounded-xl bg-[#fff7ed] border border-[#fed7aa] flex items-center justify-center text-lg text-orange-600 shadow-xs">
-                    🎓
+            <div className="text-center mb-6">
+              <span className="text-xs font-extrabold uppercase tracking-widest text-orange-600 bg-orange-50 px-3 py-1 rounded-full border border-orange-200">
+                Single Unified Gateway
+              </span>
+              <h2 className="text-2xl font-extrabold text-stone-900 mt-2">Sign In or Register</h2>
+              <p className="text-xs text-stone-500">Access student profiles or the administrator management console below</p>
+            </div>
+
+            {/* THE UNIFIED 1 BOX */}
+            <div className="bg-white rounded-3xl border border-[#fed7aa] card-warm-glow overflow-hidden grid grid-cols-1 md:grid-cols-12 min-h-[580px]">
+              
+              {/* Left Showcase Column (Warm Sunset Banner) */}
+              <div className="md:col-span-5 bg-gradient-to-br from-[#fff7ed] via-[#ffedd5] to-[#fed7aa] border-r border-[#fed7aa] p-8 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center gap-2.5 mb-6">
+                    <img src="/static/campuscore-logo.png" alt="Emblem" className="w-10 h-10 rounded-full border border-white shadow-xs object-cover bg-white" />
+                    <div>
+                      <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#c2410c]">PORTAL ACCESS</span>
+                      <h3 className="font-extrabold text-base text-[#7c2d12] leading-none">CAMPUSCORE</h3>
+                    </div>
                   </div>
-                  <div>
-                    <h2 className="text-lg font-extrabold text-stone-900 leading-tight">Student Login</h2>
-                    <p className="text-xs text-stone-500 font-medium">Access student dashboard</p>
+
+                  <h2 className="text-2xl font-extrabold text-[#7c2d12] leading-snug mb-3">
+                    CAMPUSCORE Portal
+                  </h2>
+                  <p className="text-xs sm:text-sm text-[#9a3412] font-semibold leading-relaxed mb-6">
+                    Access your student dashboard, academic standings, and institutional records securely.
+                  </p>
+
+                  <div className="space-y-3 mb-6">
+                    <div className="flex items-center gap-2.5 text-xs text-[#7c2d12] font-bold">
+                      <span className="w-5 h-5 rounded-full bg-orange-600 text-white flex items-center justify-center text-[10px] flex-shrink-0">✓</span>
+                      <span>Interactive real-time field validation</span>
+                    </div>
+                    <div className="flex items-center gap-2.5 text-xs text-[#7c2d12] font-bold">
+                      <span className="w-5 h-5 rounded-full bg-orange-600 text-white flex items-center justify-center text-[10px] flex-shrink-0">✓</span>
+                      <span>Enhanced password security rules</span>
+                    </div>
+                    <div className="flex items-center gap-2.5 text-xs text-[#7c2d12] font-bold">
+                      <span className="w-5 h-5 rounded-full bg-orange-600 text-white flex items-center justify-center text-[10px] flex-shrink-0">✓</span>
+                      <span>Seamless localhost database integration</span>
+                    </div>
+                    <div className="flex items-center gap-2.5 text-xs text-[#7c2d12] font-bold">
+                      <span className="w-5 h-5 rounded-full bg-orange-600 text-white flex items-center justify-center text-[10px] flex-shrink-0">✓</span>
+                      <span>Role-based JWT session tokens</span>
+                    </div>
+                  </div>
+
+                  {/* Logo In White Badge */}
+                  <div className="p-4 bg-white/85 border border-[#fed7aa] rounded-2xl text-center shadow-xs">
+                    <img src="/static/campuscore-logo.png" alt="Symbol" className="w-20 h-20 mx-auto rounded-full object-cover mb-2 border border-orange-200" />
+                    <p className="text-xs font-black text-[#7c2d12]">“Connecting Campus. Empowering Futures.”</p>
+                    <p className="text-[10px] text-orange-600 font-bold mt-0.5">Digital Campus Platform</p>
                   </div>
                 </div>
 
-                <form onSubmit={handleStudentLogin} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
-                      Student Email <span className="text-rose-500">*</span>
-                    </label>
-                    <input
-                      type="email"
-                      required
-                      placeholder="student@campuscore.com"
-                      value={studentLogin.email}
-                      onChange={(e) => setStudentLogin({ ...studentLogin, email: e.target.value })}
-                      className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white transition"
-                    />
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between items-center mb-1">
-                      <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider">
-                        Password <span className="text-rose-500">*</span>
-                      </label>
-                      <button
-                        type="button"
-                        onClick={() => setShowStudentPass(!showStudentPass)}
-                        className="text-xs text-orange-600 font-bold hover:underline"
-                      >
-                        {showStudentPass ? 'Hide' : 'Show'}
-                      </button>
-                    </div>
-                    <input
-                      type={showStudentPass ? 'text' : 'password'}
-                      required
-                      placeholder="Enter student password"
-                      value={studentLogin.password}
-                      onChange={(e) => setStudentLogin({ ...studentLogin, password: e.target.value })}
-                      className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white transition"
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={loading === 'student-login'}
-                    className="w-full py-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold rounded-lg shadow-sm hover:shadow transition disabled:opacity-60 text-sm mt-2"
-                  >
-                    {loading === 'student-login' ? 'Authenticating...' : 'Sign In as Student'}
-                  </button>
-                </form>
+                <div className="pt-4 text-center">
+                  <p className="text-[11px] text-[#9a3412] font-medium">© 2026 CAMPUSCORE. All rights reserved.</p>
+                </div>
               </div>
 
-              {/* Demo Autofill Box */}
-              <div className="mt-6 pt-4 border-t border-orange-100/80">
-                <div className="p-3 bg-[#fff7ed] border border-[#fed7aa] rounded-xl flex items-center justify-between gap-2">
-                  <div className="text-xs text-[#7c2d12] truncate">
-                    <span className="font-bold">Demo:</span> student@campuscore.com
-                  </div>
+              {/* Right Multi-Tab Column (1 Unified Box) */}
+              <div className="md:col-span-7 p-6 sm:p-9 flex flex-col justify-center bg-white">
+                
+                {/* 3 Tabs Header */}
+                <div className="flex p-1 bg-[#fff7ed] rounded-xl mb-6 border border-[#fed7aa]">
                   <button
                     type="button"
-                    onClick={() => setStudentLogin({ email: 'student@campuscore.com', password: 'Student@2026' })}
-                    className="text-xs px-2.5 py-1 bg-white border border-[#fed7aa] rounded-md text-orange-600 font-bold hover:bg-orange-50 transition shadow-xs flex-shrink-0"
+                    onClick={() => { setActiveTab('student-login'); setAlert(null); }}
+                    className={`flex-1 py-2 px-2 text-xs sm:text-sm font-bold rounded-lg transition-all ${
+                      activeTab === 'student-login'
+                        ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-xs'
+                        : 'text-[#9a3412] hover:text-[#7c2d12]'
+                    }`}
                   >
-                    Autofill
+                    Student Login
                   </button>
-                </div>
-              </div>
-            </div>
-
-            {/* ========================================================
-                BOX 2: STUDENT REGISTRATION
-               ======================================================== */}
-            <div className="bg-white rounded-2xl border border-[#fed7aa] auth-warm-glow p-6 sm:p-7 flex flex-col justify-between">
-              <div>
-                {/* Box Header */}
-                <div className="flex items-center gap-3 pb-4 border-b border-orange-100 mb-5">
-                  <div className="w-10 h-10 rounded-xl bg-[#fff7ed] border border-[#fed7aa] flex items-center justify-center text-lg text-orange-600 shadow-xs">
-                    📝
-                  </div>
-                  <div>
-                    <h2 className="text-lg font-extrabold text-stone-900 leading-tight">Student Register</h2>
-                    <p className="text-xs text-stone-500 font-medium">Enroll new student account</p>
-                  </div>
-                </div>
-
-                <form onSubmit={handleStudentRegister} className="space-y-3">
-                  <div>
-                    <label className="block text-xs font-bold text-stone-700 mb-1">Full Name *</label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g. Rahul Sharma"
-                      value={studentReg.name}
-                      onChange={(e) => setStudentReg({ ...studentReg, name: e.target.value })}
-                      className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded-lg text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <label className="block text-xs font-bold text-stone-700 mb-1">Student ID *</label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="CC202611"
-                        value={studentReg.student_id}
-                        onChange={(e) => setStudentReg({ ...studentReg, student_id: e.target.value })}
-                        className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded-lg text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-stone-700 mb-1">Phone</label>
-                      <input
-                        type="tel"
-                        placeholder="+91 987..."
-                        value={studentReg.phone}
-                        onChange={(e) => setStudentReg({ ...studentReg, phone: e.target.value })}
-                        className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded-lg text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-stone-700 mb-1">Institutional Email *</label>
-                    <input
-                      type="email"
-                      required
-                      placeholder="name@nxtlogic.com"
-                      value={studentReg.email}
-                      onChange={(e) => setStudentReg({ ...studentReg, email: e.target.value })}
-                      className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded-lg text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <label className="block text-xs font-bold text-stone-700 mb-1">Department</label>
-                      <select
-                        value={studentReg.department}
-                        onChange={(e) => setStudentReg({ ...studentReg, department: e.target.value })}
-                        className="w-full px-2.5 py-2 bg-stone-50 border border-stone-300 rounded-lg text-xs focus:ring-2 focus:ring-orange-500"
-                      >
-                        <option>Computer Science</option>
-                        <option>Information Tech</option>
-                        <option>AI & Data Science</option>
-                        <option>Electronics & Comm</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-stone-700 mb-1">Year</label>
-                      <select
-                        value={studentReg.year}
-                        onChange={(e) => setStudentReg({ ...studentReg, year: e.target.value })}
-                        className="w-full px-2.5 py-2 bg-stone-50 border border-stone-300 rounded-lg text-xs focus:ring-2 focus:ring-orange-500"
-                      >
-                        <option>1st Year</option>
-                        <option>2nd Year</option>
-                        <option>3rd Year</option>
-                        <option>4th Year</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <label className="block text-xs font-bold text-stone-700 mb-1">Password *</label>
-                      <input
-                        type="password"
-                        required
-                        placeholder="Min 6 chars"
-                        value={studentReg.password}
-                        onChange={(e) => setStudentReg({ ...studentReg, password: e.target.value })}
-                        className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-orange-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-stone-700 mb-1">Confirm *</label>
-                      <input
-                        type="password"
-                        required
-                        placeholder="Re-type"
-                        value={studentReg.confirm_password}
-                        onChange={(e) => setStudentReg({ ...studentReg, confirm_password: e.target.value })}
-                        className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-orange-500"
-                      />
-                    </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={loading === 'student-register'}
-                    className="w-full py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold rounded-lg shadow-sm hover:shadow transition disabled:opacity-60 text-xs sm:text-sm mt-2"
-                  >
-                    {loading === 'student-register' ? 'Registering...' : 'Register Student'}
-                  </button>
-                </form>
-              </div>
-
-              <div className="mt-4 pt-3 border-t border-orange-100 text-center">
-                <span className="text-xs text-stone-400 font-medium">Automatic instant database enrollment</span>
-              </div>
-            </div>
-
-            {/* ========================================================
-                BOX 3: ADMIN LOGIN
-               ======================================================== */}
-            <div className="bg-white rounded-2xl border border-[#fed7aa] auth-warm-glow p-6 sm:p-7 flex flex-col justify-between">
-              <div>
-                {/* Box Header */}
-                <div className="flex items-center gap-3 pb-4 border-b border-orange-100 mb-5">
-                  <div className="w-10 h-10 rounded-xl bg-[#fff7ed] border border-[#fed7aa] flex items-center justify-center text-lg text-orange-600 shadow-xs">
-                    🔒
-                  </div>
-                  <div>
-                    <h2 className="text-lg font-extrabold text-stone-900 leading-tight">Admin Portal</h2>
-                    <p className="text-xs text-stone-500 font-medium">Student records & CRUD console</p>
-                  </div>
-                </div>
-
-                <div className="mb-4 p-2.5 rounded-lg bg-[#fff7ed] border border-[#fed7aa] text-[11px] font-bold text-[#c2410c] flex items-center gap-2">
-                  <span>🛡️</span> Protected Administrative Access Only
-                </div>
-
-                <form onSubmit={handleAdminLogin} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
-                      Admin Email <span className="text-rose-500">*</span>
-                    </label>
-                    <input
-                      type="email"
-                      required
-                      placeholder="admin@campuscore.com"
-                      value={adminLogin.email}
-                      onChange={(e) => setAdminLogin({ ...adminLogin, email: e.target.value })}
-                      className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white transition"
-                    />
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between items-center mb-1">
-                      <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider">
-                        Master Password <span className="text-rose-500">*</span>
-                      </label>
-                      <button
-                        type="button"
-                        onClick={() => setShowAdminPass(!showAdminPass)}
-                        className="text-xs text-orange-600 font-bold hover:underline"
-                      >
-                        {showAdminPass ? 'Hide' : 'Show'}
-                      </button>
-                    </div>
-                    <input
-                      type={showAdminPass ? 'text' : 'password'}
-                      required
-                      placeholder="Enter master password"
-                      value={adminLogin.password}
-                      onChange={(e) => setAdminLogin({ ...adminLogin, password: e.target.value })}
-                      className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white transition"
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={loading === 'admin-login'}
-                    className="w-full py-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold rounded-lg shadow-sm hover:shadow transition disabled:opacity-60 text-sm mt-2"
-                  >
-                    {loading === 'admin-login' ? 'Authenticating Admin...' : 'Sign In as Administrator'}
-                  </button>
-                </form>
-              </div>
-
-              {/* Demo Autofill Box */}
-              <div className="mt-6 pt-4 border-t border-orange-100/80">
-                <div className="p-3 bg-[#fff7ed] border border-[#fed7aa] rounded-xl flex items-center justify-between gap-2">
-                  <div className="text-xs text-[#7c2d12] truncate">
-                    <span className="font-bold">Demo:</span> admin@campuscore.com
-                  </div>
                   <button
                     type="button"
-                    onClick={() => setAdminLogin({ email: 'admin@campuscore.com', password: 'Admin@2026' })}
-                    className="text-xs px-2.5 py-1 bg-white border border-[#fed7aa] rounded-md text-orange-600 font-bold hover:bg-orange-50 transition shadow-xs flex-shrink-0"
+                    onClick={() => { setActiveTab('student-register'); setAlert(null); }}
+                    className={`flex-1 py-2 px-2 text-xs sm:text-sm font-bold rounded-lg transition-all ${
+                      activeTab === 'student-register'
+                        ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-xs'
+                        : 'text-[#9a3412] hover:text-[#7c2d12]'
+                    }`}
                   >
-                    Autofill
+                    Register
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setActiveTab('admin-login'); setAlert(null); }}
+                    className={`flex-1 py-2 px-2 text-xs sm:text-sm font-bold rounded-lg transition-all ${
+                      activeTab === 'admin-login'
+                        ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-xs'
+                        : 'text-[#9a3412] hover:text-[#7c2d12]'
+                    }`}
+                  >
+                    Admin Portal
                   </button>
                 </div>
+
+                {/* Alert Notification Banner */}
+                {alert && (
+                  <div className={`mb-4 p-3 rounded-xl text-xs sm:text-sm flex items-center gap-2 border font-bold ${
+                    alert.type === 'success' 
+                      ? 'bg-emerald-50 text-emerald-800 border-emerald-200' 
+                      : 'bg-rose-50 text-rose-800 border-rose-200'
+                  }`}>
+                    <span>{alert.type === 'success' ? '✓' : '⚠'}</span>
+                    <span>{alert.message}</span>
+                  </div>
+                )}
+
+                {/* ========================================================
+                    TAB 1: STUDENT LOGIN
+                   ======================================================== */}
+                {activeTab === 'student-login' && (
+                  <div>
+                    <div className="mb-4">
+                      <h3 className="text-lg font-extrabold text-stone-900">Student Sign In</h3>
+                      <p className="text-xs text-stone-500">Access your academic records, courses, and standing.</p>
+                    </div>
+
+                    <form onSubmit={handleStudentLogin} className="space-y-3.5">
+                      <div>
+                        <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
+                          Student Email <span className="text-rose-500">*</span>
+                        </label>
+                        <input
+                          type="email"
+                          required
+                          placeholder="student@campuscore.com"
+                          value={studentLogin.email}
+                          onChange={(e) => setStudentLogin({ ...studentLogin, email: e.target.value })}
+                          className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white transition"
+                        />
+                      </div>
+
+                      <div>
+                        <div className="flex justify-between items-center mb-1">
+                          <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider">
+                            Password <span className="text-rose-500">*</span>
+                          </label>
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="text-xs text-orange-600 font-bold hover:underline"
+                          >
+                            {showPassword ? 'Hide' : 'Show'}
+                          </button>
+                        </div>
+                        <input
+                          type={showPassword ? 'text' : 'password'}
+                          required
+                          placeholder="Enter your student password"
+                          value={studentLogin.password}
+                          onChange={(e) => setStudentLogin({ ...studentLogin, password: e.target.value })}
+                          className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white transition"
+                        />
+                      </div>
+
+                      <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold rounded-lg shadow-sm hover:shadow transition disabled:opacity-60 text-sm"
+                      >
+                        {loading ? 'Authenticating...' : 'Sign In as Student'}
+                      </button>
+                    </form>
+
+                    {/* Quick Demo Autofill */}
+                    <div className="mt-5 p-3 bg-[#fff7ed] border border-[#fed7aa] rounded-xl flex items-center justify-between gap-2">
+                      <div className="text-xs text-[#7c2d12] truncate">
+                        <span className="font-bold">Student Demo:</span> student@campuscore.com
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setStudentLogin({ email: 'student@campuscore.com', password: 'Student@2026' })}
+                        className="text-xs px-2.5 py-1 bg-white border border-[#fed7aa] rounded-md text-orange-600 font-bold hover:bg-orange-50 transition shadow-xs flex-shrink-0"
+                      >
+                        Autofill Demo
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* ========================================================
+                    TAB 2: STUDENT REGISTRATION
+                   ======================================================== */}
+                {activeTab === 'student-register' && (
+                  <div>
+                    <div className="mb-4">
+                      <h3 className="text-lg font-extrabold text-stone-900">Student Registration</h3>
+                      <p className="text-xs text-stone-500">Create a new institutional student profile.</p>
+                    </div>
+
+                    <form onSubmit={handleStudentRegister} className="space-y-3">
+                      <div className="grid grid-cols-2 gap-2.5">
+                        <div>
+                          <label className="block text-xs font-bold text-stone-700 mb-0.5">Full Name *</label>
+                          <input
+                            type="text"
+                            required
+                            placeholder="John Doe"
+                            value={studentReg.name}
+                            onChange={(e) => setStudentReg({ ...studentReg, name: e.target.value })}
+                            className="w-full px-3 py-1.5 bg-stone-50 border border-stone-300 rounded-lg text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-stone-700 mb-0.5">Student ID *</label>
+                          <input
+                            type="text"
+                            required
+                            placeholder="CC202611"
+                            value={studentReg.student_id}
+                            onChange={(e) => setStudentReg({ ...studentReg, student_id: e.target.value })}
+                            className="w-full px-3 py-1.5 bg-stone-50 border border-stone-300 rounded-lg text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2.5">
+                        <div>
+                          <label className="block text-xs font-bold text-stone-700 mb-0.5">Email *</label>
+                          <input
+                            type="email"
+                            required
+                            placeholder="name@campuscore.com"
+                            value={studentReg.email}
+                            onChange={(e) => setStudentReg({ ...studentReg, email: e.target.value })}
+                            className="w-full px-3 py-1.5 bg-stone-50 border border-stone-300 rounded-lg text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-stone-700 mb-0.5">Phone</label>
+                          <input
+                            type="tel"
+                            placeholder="+91 987..."
+                            value={studentReg.phone}
+                            onChange={(e) => setStudentReg({ ...studentReg, phone: e.target.value })}
+                            className="w-full px-3 py-1.5 bg-stone-50 border border-stone-300 rounded-lg text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2.5">
+                        <div>
+                          <label className="block text-xs font-bold text-stone-700 mb-0.5">Department</label>
+                          <select
+                            value={studentReg.department}
+                            onChange={(e) => setStudentReg({ ...studentReg, department: e.target.value })}
+                            className="w-full px-2 py-1.5 bg-stone-50 border border-stone-300 rounded-lg text-xs focus:ring-2 focus:ring-orange-500"
+                          >
+                            <option>Computer Science</option>
+                            <option>Information Tech</option>
+                            <option>AI & Data Science</option>
+                            <option>Electronics & Comm</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-stone-700 mb-0.5">Year</label>
+                          <select
+                            value={studentReg.year}
+                            onChange={(e) => setStudentReg({ ...studentReg, year: e.target.value })}
+                            className="w-full px-2 py-1.5 bg-stone-50 border border-stone-300 rounded-lg text-xs focus:ring-2 focus:ring-orange-500"
+                          >
+                            <option>1st Year</option>
+                            <option>2nd Year</option>
+                            <option>3rd Year</option>
+                            <option>4th Year</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2.5">
+                        <div>
+                          <label className="block text-xs font-bold text-stone-700 mb-0.5">Password *</label>
+                          <input
+                            type="password"
+                            required
+                            placeholder="Min 6 chars"
+                            value={studentReg.password}
+                            onChange={(e) => setStudentReg({ ...studentReg, password: e.target.value })}
+                            className="w-full px-3 py-1.5 bg-stone-50 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-orange-500"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-stone-700 mb-0.5">Confirm *</label>
+                          <input
+                            type="password"
+                            required
+                            placeholder="Re-type"
+                            value={studentReg.confirm_password}
+                            onChange={(e) => setStudentReg({ ...studentReg, confirm_password: e.target.value })}
+                            className="w-full px-3 py-1.5 bg-stone-50 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-orange-500"
+                          />
+                        </div>
+                      </div>
+
+                      <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold rounded-lg shadow-sm hover:shadow transition disabled:opacity-60 text-xs sm:text-sm mt-1"
+                      >
+                        {loading ? 'Registering...' : 'Register as Student'}
+                      </button>
+                    </form>
+                  </div>
+                )}
+
+                {/* ========================================================
+                    TAB 3: ADMIN LOGIN
+                   ======================================================== */}
+                {activeTab === 'admin-login' && (
+                  <div>
+                    <div className="mb-4">
+                      <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-[#fff7ed] text-[#c2410c] text-[11px] font-bold border border-[#fed7aa] mb-1">
+                        🔒 Protected Admin Console
+                      </div>
+                      <h3 className="text-lg font-extrabold text-stone-900">Administrator Portal</h3>
+                      <p className="text-xs text-stone-500">Student records, CRUD operations, and institutional stats.</p>
+                    </div>
+
+                    <form onSubmit={handleAdminLogin} className="space-y-3.5">
+                      <div>
+                        <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
+                          Admin Email <span className="text-rose-500">*</span>
+                        </label>
+                        <input
+                          type="email"
+                          required
+                          placeholder="admin@campuscore.com"
+                          value={adminLogin.email}
+                          onChange={(e) => setAdminLogin({ ...adminLogin, email: e.target.value })}
+                          className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white transition"
+                        />
+                      </div>
+
+                      <div>
+                        <div className="flex justify-between items-center mb-1">
+                          <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider">
+                            Master Password <span className="text-rose-500">*</span>
+                          </label>
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="text-xs text-orange-600 font-bold hover:underline"
+                          >
+                            {showPassword ? 'Hide' : 'Show'}
+                          </button>
+                        </div>
+                        <input
+                          type={showPassword ? 'text' : 'password'}
+                          required
+                          placeholder="Enter master password"
+                          value={adminLogin.password}
+                          onChange={(e) => setAdminLogin({ ...adminLogin, password: e.target.value })}
+                          className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white transition"
+                        />
+                      </div>
+
+                      <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold rounded-lg shadow-sm hover:shadow transition disabled:opacity-60 text-sm"
+                      >
+                        {loading ? 'Authenticating Admin...' : 'Sign In as Administrator'}
+                      </button>
+                    </form>
+
+                    {/* Quick Demo Autofill */}
+                    <div className="mt-5 p-3 bg-[#fff7ed] border border-[#fed7aa] rounded-xl flex items-center justify-between gap-2">
+                      <div className="text-xs text-[#7c2d12] truncate">
+                        <span className="font-bold">Admin Demo:</span> admin@campuscore.com
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setAdminLogin({ email: 'admin@campuscore.com', password: 'Admin@2026' })}
+                        className="text-xs px-2.5 py-1 bg-white border border-[#fed7aa] rounded-md text-orange-600 font-bold hover:bg-orange-50 transition shadow-xs flex-shrink-0"
+                      >
+                        Autofill Demo
+                      </button>
+                    </div>
+                  </div>
+                )}
+
               </div>
             </div>
+          </section>
 
-          </main>
-
-          {/* Footer Branding */}
-          <footer className="mt-10 text-center text-xs text-stone-400 font-semibold">
-            © 2026 CAMPUSCORE Digital Campus Platform. All rights reserved.
+          {/* ========================================================
+              FOOTER
+             ======================================================== */}
+          <footer className="border-t border-[#fed7aa]/50 bg-stone-50/50 py-8 px-4 text-center text-xs text-stone-500 font-medium">
+            <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <img src="/static/campuscore-logo.png" alt="Emblem" className="w-6 h-6 rounded-full" />
+                <span className="font-extrabold text-stone-800">CAMPUSCORE</span>
+                <span>• Digital Campus Platform</span>
+              </div>
+              <p>© 2026 CAMPUSCORE. “Connecting Campus. Empowering Futures.” All rights reserved.</p>
+            </div>
           </footer>
         </div>
       );
     }
 
-    ReactDOM.createRoot(document.getElementById('root')).render(<ThreeBoxAuthApp />);
+    ReactDOM.createRoot(document.getElementById('root')).render(<MainCampusDashboard />);
   </script>
 </body>
 </html>
