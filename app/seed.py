@@ -8,43 +8,44 @@ def seed_database():
     db = SessionLocal()
     try:
         # 1. Seed Admin
-        admin = db.query(Admin).filter(Admin.email == "admin@nxtlogic.com").first()
-        if not admin:
-            admin = Admin(
-                name="System Administrator",
-                email="admin@nxtlogic.com",
-                password_hash=hash_password("Admin@2026"),
-                role="admin"
-            )
-            db.add(admin)
+        for admin_email in ["admin@campuscore.com", "admin@nxtlogic.com"]:
+            admin = db.query(Admin).filter(Admin.email == admin_email).first()
+            if not admin:
+                admin = Admin(
+                    name="System Administrator",
+                    email=admin_email,
+                    password_hash=hash_password("Admin@2026"),
+                    role="admin"
+                )
+                db.add(admin)
 
         # 2. Seed Default Student
-        default_student = db.query(Student).filter(Student.email == "student@nxtlogic.com").first()
-        if not default_student:
-            default_student = Student(
-                student_id="NXT202601",
-                name="Abishek Raman",
-                email="student@nxtlogic.com",
-                phone="+91 9845012345",
-                department="Computer Science",
-                year="3rd Year",
-                cgpa=9.15,
-                address="42 Innovation Park, Coimbatore, Tamil Nadu",
-                dob="2003-08-14",
-                password_hash=hash_password("Student@2026")
-            )
-            db.add(default_student)
-            db.commit()
-            db.refresh(default_student)
+        for s_email, s_id in [("student@campuscore.com", "CC202601"), ("student@nxtlogic.com", "NXT202601")]:
+            default_student = db.query(Student).filter(Student.email == s_email).first()
+            if not default_student:
+                default_student = Student(
+                    student_id=s_id,
+                    name="Abishek Raman",
+                    email=s_email,
+                    phone="+91 9845012345",
+                    department="Computer Science",
+                    year="3rd Year",
+                    cgpa=9.15,
+                    address="42 Innovation Park, Coimbatore, Tamil Nadu",
+                    dob="2003-08-14",
+                    password_hash=hash_password("Student@2026")
+                )
+                db.add(default_student)
+                db.commit()
+                db.refresh(default_student)
 
-            # Add sample courses for this student
-            courses = [
-                AcademicCourse(student_id=default_student.id, course_code="CS301", course_name="Data Structures & Algorithms", credits=4, grade="A+", semester="Semester 5"),
-                AcademicCourse(student_id=default_student.id, course_code="CS302", course_name="Database Management Systems", credits=4, grade="O", semester="Semester 5"),
-                AcademicCourse(student_id=default_student.id, course_code="CS303", course_name="Web Technologies & Frameworks", credits=3, grade="O", semester="Semester 5"),
-                AcademicCourse(student_id=default_student.id, course_code="CS304", course_name="Cloud Computing & DevOps", credits=3, grade="A", semester="Semester 5")
-            ]
-            db.add_all(courses)
+                courses = [
+                    AcademicCourse(student_id=default_student.id, course_code="CS301", course_name="Data Structures & Algorithms", credits=4, grade="A+", semester="Semester 5"),
+                    AcademicCourse(student_id=default_student.id, course_code="CS302", course_name="Database Management Systems", credits=4, grade="O", semester="Semester 5"),
+                    AcademicCourse(student_id=default_student.id, course_code="CS303", course_name="Web Technologies & Frameworks", credits=3, grade="O", semester="Semester 5"),
+                    AcademicCourse(student_id=default_student.id, course_code="CS304", course_name="Cloud Computing & DevOps", credits=3, grade="A", semester="Semester 5")
+                ]
+                db.add_all(courses)
 
         # 3. Seed additional sample students for Admin table
         sample_students = [
