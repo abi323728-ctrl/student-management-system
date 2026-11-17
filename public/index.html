@@ -3,196 +3,557 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>User Login | NXTLOGIC Portal</title>
-  <link rel="stylesheet" href="style.css">
+  <title>NXTLOGIC | Student Management System Portal</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- React 18 & ReactDOM -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <!-- Babel for JSX compilation -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Google Fonts: Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              navy: '#0f172a',
+              dark: '#1e293b',
+              blue: '#2563eb',
+              indigo: '#1d4ed8',
+              light: '#f8fafc',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .auth-glow {
+      box-shadow: 0 10px 40px -10px rgba(37, 99, 235, 0.12), 0 0 80px 20px rgba(224, 231, 255, 0.4);
+    }
+  </style>
 </head>
-<body>
-  <main class="page-container">
-    <div class="login-card horizontal-card">
-      <!-- Left Hero Branding Column -->
-      <aside class="card-hero-panel">
-        <div class="hero-content">
-          <div class="brand-header-row">
-            <div class="brand-badge">
-              <img src="nxtlogic-logo.jpg" alt="NXTLOGIC" class="brand-logo-small">
+<body class="bg-slate-50 text-slate-800 min-h-screen flex items-center justify-center p-4 antialiased">
+  <div id="root" class="w-full max-w-5xl"></div>
+
+  <!-- API & Auth Script -->
+  <script src="/static/app.js"></script>
+
+  <!-- React Application -->
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    function AuthApp() {
+      const [activeTab, setActiveTab] = useState('student-login'); // 'student-login' | 'student-register' | 'admin-login'
+      const [loading, setLoading] = useState(false);
+      const [alert, setAlert] = useState(null); // { type: 'error' | 'success', message: '' }
+      const [showPassword, setShowPassword] = useState(false);
+
+      // Student Login Form State
+      const [studentLogin, setStudentLogin] = useState({ email: '', password: '' });
+
+      // Student Register Form State
+      const [studentReg, setStudentReg] = useState({
+        name: '',
+        student_id: '',
+        email: '',
+        phone: '',
+        department: 'Computer Science',
+        year: '1st Year',
+        password: '',
+        confirm_password: ''
+      });
+
+      // Admin Login Form State
+      const [adminLogin, setAdminLogin] = useState({ email: '', password: '' });
+
+      useEffect(() => {
+        // If already logged in, redirect
+        const token = window.auth.getToken();
+        const role = window.auth.getRole();
+        if (token && role === 'admin') window.location.href = '/admin';
+        if (token && role === 'student') window.location.href = '/student';
+      }, []);
+
+      const showAlert = (message, type = 'error') => {
+        setAlert({ message, type });
+      };
+
+      const handleStudentLogin = async (e) => {
+        e.preventDefault();
+        setAlert(null);
+        if (!studentLogin.email || !studentLogin.password) {
+          showAlert('Please enter both email and password.');
+          return;
+        }
+
+        setLoading(true);
+        try {
+          const res = await window.api.loginStudent(studentLogin.email, studentLogin.password);
+          window.auth.setSession(res.access_token, res.role, res.user);
+          showAlert('Login successful! Redirecting to Student Dashboard...', 'success');
+          setTimeout(() => { window.location.href = '/student'; }, 800);
+        } catch (err) {
+          showAlert(err.message);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      const handleStudentRegister = async (e) => {
+        e.preventDefault();
+        setAlert(null);
+
+        if (!studentReg.name || !studentReg.student_id || !studentReg.email || !studentReg.password) {
+          showAlert('Please fill in all required fields.');
+          return;
+        }
+        if (studentReg.password.length < 6) {
+          showAlert('Password must be at least 6 characters long.');
+          return;
+        }
+        if (studentReg.password !== studentReg.confirm_password) {
+          showAlert('Passwords do not match.');
+          return;
+        }
+
+        setLoading(true);
+        try {
+          const res = await window.api.registerStudent({
+            name: studentReg.name,
+            student_id: studentReg.student_id,
+            email: studentReg.email,
+            phone: studentReg.phone,
+            department: studentReg.department,
+            year: studentReg.year,
+            password: studentReg.password
+          });
+          window.auth.setSession(res.access_token, res.role, res.user);
+          showAlert('Registration successful! Redirecting to Student Dashboard...', 'success');
+          setTimeout(() => { window.location.href = '/student'; }, 1000);
+        } catch (err) {
+          showAlert(err.message);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      const handleAdminLogin = async (e) => {
+        e.preventDefault();
+        setAlert(null);
+        if (!adminLogin.email || !adminLogin.password) {
+          showAlert('Please enter administrator email and password.');
+          return;
+        }
+
+        setLoading(true);
+        try {
+          const res = await window.api.loginAdmin(adminLogin.email, adminLogin.password);
+          window.auth.setSession(res.access_token, res.role, res.user);
+          showAlert('Admin authentication verified! Redirecting...', 'success');
+          setTimeout(() => { window.location.href = '/admin'; }, 800);
+        } catch (err) {
+          showAlert(err.message);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      const fillStudentDemo = () => {
+        setStudentLogin({ email: 'student@nxtlogic.com', password: 'Student@2026' });
+        setAlert(null);
+      };
+
+      const fillAdminDemo = () => {
+        setAdminLogin({ email: 'admin@nxtlogic.com', password: 'Admin@2026' });
+        setAlert(null);
+      };
+
+      return (
+        <div className="bg-white rounded-2xl border border-slate-200 auth-glow overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[620px]">
+          {/* Left Column: Premium SaaS Brand Showcase */}
+          <div className="lg:col-span-5 bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white p-8 sm:p-10 flex flex-col justify-between relative overflow-hidden">
+            <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div>
+              {/* Header branding */}
+              <div className="flex items-center gap-3 mb-8">
+                <div className="w-11 h-11 rounded-xl bg-white/10 backdrop-blur border border-white/20 flex items-center justify-center p-1 overflow-hidden shadow-lg">
+                  <img src="/static/nxtlogic-logo.jpg" alt="NXTLOGIC" className="w-full h-full object-cover rounded-lg" />
+                </div>
+                <div>
+                  <span className="text-xs font-bold tracking-widest uppercase text-blue-400">Institutional Portal</span>
+                  <h2 className="text-lg font-bold tracking-tight text-white leading-tight">NXTLOGIC SMS</h2>
+                </div>
+              </div>
+
+              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white leading-snug mb-3">
+                Student Management System
+              </h1>
+              <p className="text-slate-300 text-sm leading-relaxed mb-6">
+                A unified, secure platform for student self-service and comprehensive administrative academic governance.
+              </p>
+
+              {/* Feature Checklist */}
+              <div className="space-y-3 mb-8">
+                <div className="flex items-center gap-3 text-sm text-slate-200">
+                  <div className="w-5 h-5 rounded-full bg-blue-500/20 border border-blue-400/40 flex items-center justify-center text-blue-300 text-xs">✓</div>
+                  <span>Real-time academic profile & CGPA tracking</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm text-slate-200">
+                  <div className="w-5 h-5 rounded-full bg-blue-500/20 border border-blue-400/40 flex items-center justify-center text-blue-300 text-xs">✓</div>
+                  <span>Admin CRUD student records management</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm text-slate-200">
+                  <div className="w-5 h-5 rounded-full bg-blue-500/20 border border-blue-400/40 flex items-center justify-center text-blue-300 text-xs">✓</div>
+                  <span>FastAPI + PostgreSQL / SQLite JWT security</span>
+                </div>
+              </div>
             </div>
-            <span class="company-tag">NXTLOGIC PORTAL</span>
-          </div>
-          
-          <h1 class="hero-title">NXTLOGIC User Login</h1>
-          <p class="hero-desc">Access your internship workspace, tools, and client project dashboards securely.</p>
-          
-          <ul class="hero-features">
-            <li class="feature-item">
-              <span class="feature-check">✓</span>
-              <span>Interactive real-time field validation</span>
-            </li>
-            <li class="feature-item">
-              <span class="feature-check">✓</span>
-              <span>Enhanced password security rules</span>
-            </li>
-            <li class="feature-item">
-              <span class="feature-check">✓</span>
-              <span>Seamless localhost server integration</span>
-            </li>
-          </ul>
 
-          <!-- Prominent 2nd Picture in Free Space -->
-          <div class="hero-showcase-box">
-            <img src="nxtlogic-logo.jpg" alt="NXTLOGIC Web Designing, Development, Web Hosting & SEO" class="hero-showcase-img">
-            <p class="showcase-caption">www.nxtlogic.com</p>
-          </div>
-        </div>
-
-        <div class="hero-footer">
-          <p>© 2026 NXTLOGIC Inc. All rights reserved.</p>
-        </div>
-      </aside>
-
-      <!-- Right Form Column -->
-      <section class="card-form-panel">
-        <header class="form-header">
-          <h2 class="form-title">Welcome back</h2>
-          <p class="form-subtitle">Please enter your details to sign in.</p>
-        </header>
-
-        <!-- Alert Notification Banner -->
-        <div id="alertBanner" class="alert-banner" role="alert" aria-live="assertive" hidden>
-          <span class="alert-icon" id="alertIcon"></span>
-          <span class="alert-message" id="alertMessage"></span>
-        </div>
-
-        <!-- Login Form -->
-        <form id="loginForm" class="login-form" novalidate>
-          <!-- Email Field -->
-          <div class="form-group" id="groupEmail">
-            <label for="email" class="form-label">
-              Email address <span class="required">*</span>
-            </label>
-            <div class="input-wrapper">
-              <span class="input-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="2" y="4" width="20" height="16" rx="2"/>
-                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
-                </svg>
-              </span>
-              <input 
-                type="email" 
-                id="email" 
-                name="email" 
-                class="form-input" 
-                placeholder="e.g. intern@nxtlogic.com" 
-                autocomplete="email"
-                required 
-                aria-describedby="emailError"
-              >
-              <span class="status-icon" id="emailStatusIcon" aria-hidden="true"></span>
+            {/* Showcase Logo Badge */}
+            <div className="bg-white/5 border border-white/10 rounded-xl p-4 flex items-center gap-4 backdrop-blur-sm">
+              <img src="/static/nxtlogic-logo.jpg" alt="Logo" className="w-14 h-14 rounded-full border-2 border-white/30 shadow-md object-cover flex-shrink-0" />
+              <div>
+                <p className="text-xs font-semibold text-white">NXTLOGIC Solutions</p>
+                <p className="text-xs text-slate-400">Web Development • Hosting • SEO</p>
+                <a href="https://www.nxtlogic.com" target="_blank" className="text-xs text-blue-400 hover:text-blue-300 font-medium">www.nxtlogic.com →</a>
+              </div>
             </div>
-            <div id="emailError" class="field-error" aria-live="polite"></div>
+
+            <div className="mt-6 pt-4 border-t border-white/10 text-xs text-slate-400">
+              © 2026 NXTLOGIC Inc. All rights reserved.
+            </div>
           </div>
 
-          <!-- Password Field -->
-          <div class="form-group" id="groupPassword">
-            <div class="label-row">
-              <label for="password" class="form-label">
-                Password <span class="required">*</span>
-              </label>
-              <a href="#" class="forgot-link" tabindex="0">Forgot?</a>
-            </div>
-            <div class="input-wrapper">
-              <span class="input-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                </svg>
-              </span>
-              <input 
-                type="password" 
-                id="password" 
-                name="password" 
-                class="form-input" 
-                placeholder="Enter your password" 
-                autocomplete="current-password"
-                required 
-                aria-describedby="passwordError passwordRules"
+          {/* Right Column: Interactive Multi-Tab Form */}
+          <div className="lg:col-span-7 p-6 sm:p-10 flex flex-col justify-center bg-white">
+            {/* Tab Navigation */}
+            <div className="flex p-1 bg-slate-100 rounded-xl mb-6 border border-slate-200">
+              <button
+                type="button"
+                onClick={() => { setActiveTab('student-login'); setAlert(null); }}
+                className={`flex-1 py-2.5 px-3 text-xs sm:text-sm font-semibold rounded-lg transition-all ${
+                  activeTab === 'student-login'
+                    ? 'bg-white text-blue-600 shadow-sm'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
               >
-              <button 
-                type="button" 
-                id="togglePassword" 
-                class="toggle-password-btn" 
-                aria-label="Show password"
-                title="Show password"
+                Student Login
+              </button>
+              <button
+                type="button"
+                onClick={() => { setActiveTab('student-register'); setAlert(null); }}
+                className={`flex-1 py-2.5 px-3 text-xs sm:text-sm font-semibold rounded-lg transition-all ${
+                  activeTab === 'student-register'
+                    ? 'bg-white text-blue-600 shadow-sm'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
               >
-                <svg id="eyeIcon" class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                  <circle cx="12" cy="12" r="3"/>
-                </svg>
+                Register
+              </button>
+              <button
+                type="button"
+                onClick={() => { setActiveTab('admin-login'); setAlert(null); }}
+                className={`flex-1 py-2.5 px-3 text-xs sm:text-sm font-semibold rounded-lg transition-all ${
+                  activeTab === 'admin-login'
+                    ? 'bg-white text-blue-600 shadow-sm'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Admin Portal
               </button>
             </div>
-            <div id="passwordError" class="field-error" aria-live="polite"></div>
 
-            <!-- Password Live Helper Requirements -->
-            <div class="password-rules" id="passwordRules">
-              <p class="rules-title">Password must contain:</p>
-              <ul class="rules-list">
-                <li id="ruleLength" class="rule-item">
-                  <span class="rule-bullet">•</span> 8+ chars
-                </li>
-                <li id="ruleUpper" class="rule-item">
-                  <span class="rule-bullet">•</span> 1 uppercase
-                </li>
-                <li id="ruleNumber" class="rule-item">
-                  <span class="rule-bullet">•</span> 1 number
-                </li>
-                <li id="ruleSpecial" class="rule-item">
-                  <span class="rule-bullet">•</span> 1 symbol
-                </li>
-              </ul>
-            </div>
+            {/* Alert Message Banner */}
+            {alert && (
+              <div className={`mb-5 p-3.5 rounded-lg text-sm flex items-center gap-2.5 border ${
+                alert.type === 'success' 
+                  ? 'bg-emerald-50 text-emerald-800 border-emerald-200' 
+                  : 'bg-rose-50 text-rose-800 border-rose-200'
+              }`}>
+                <span>{alert.type === 'success' ? '✓' : '⚠'}</span>
+                <span className="font-medium">{alert.message}</span>
+              </div>
+            )}
+
+            {/* TAB 1: Student Login */}
+            {activeTab === 'student-login' && (
+              <div>
+                <div className="mb-6">
+                  <h2 className="text-xl font-bold text-slate-900">Student Sign In</h2>
+                  <p className="text-sm text-slate-500">Access your academic records, course details, and profile.</p>
+                </div>
+
+                <form onSubmit={handleStudentLogin} className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                      Student Email Address <span className="text-rose-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      placeholder="student@nxtlogic.com"
+                      value={studentLogin.email}
+                      onChange={(e) => setStudentLogin({ ...studentLogin, email: e.target.value })}
+                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
+                    />
+                  </div>
+
+                  <div>
+                    <div className="flex justify-between items-center mb-1.5">
+                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                        Password <span className="text-rose-500">*</span>
+                      </label>
+                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-xs text-blue-600 hover:underline">
+                        {showPassword ? 'Hide' : 'Show'}
+                      </button>
+                    </div>
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      required
+                      placeholder="Enter your student password"
+                      value={studentLogin.password}
+                      onChange={(e) => setStudentLogin({ ...studentLogin, password: e.target.value })}
+                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-sm hover:shadow transition-all disabled:opacity-60 flex items-center justify-center gap-2"
+                  >
+                    {loading ? 'Authenticating...' : 'Sign In as Student'}
+                  </button>
+                </form>
+
+                {/* Demo autofill */}
+                <div className="mt-5 p-3 bg-slate-50 border border-slate-200 rounded-lg flex items-center justify-between">
+                  <div className="text-xs text-slate-600">
+                    <span className="font-semibold text-slate-800">Demo Account:</span> student@nxtlogic.com
+                  </div>
+                  <button
+                    type="button"
+                    onClick={fillStudentDemo}
+                    className="text-xs px-2.5 py-1 bg-white border border-slate-300 rounded text-blue-600 hover:bg-slate-50 font-semibold transition"
+                  >
+                    Autofill Demo
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* TAB 2: Student Registration */}
+            {activeTab === 'student-register' && (
+              <div>
+                <div className="mb-5">
+                  <h2 className="text-xl font-bold text-slate-900">Student Registration</h2>
+                  <p className="text-sm text-slate-500">Create your new institutional student account.</p>
+                </div>
+
+                <form onSubmit={handleStudentRegister} className="space-y-3.5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">Full Name *</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="John Doe"
+                        value={studentReg.name}
+                        onChange={(e) => setStudentReg({ ...studentReg, name: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">Roll No / Student ID *</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="NXT202610"
+                        value={studentReg.student_id}
+                        onChange={(e) => setStudentReg({ ...studentReg, student_id: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">Email Address *</label>
+                      <input
+                        type="email"
+                        required
+                        placeholder="name@nxtlogic.com"
+                        value={studentReg.email}
+                        onChange={(e) => setStudentReg({ ...studentReg, email: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">Phone Number</label>
+                      <input
+                        type="tel"
+                        placeholder="+91 9876543210"
+                        value={studentReg.phone}
+                        onChange={(e) => setStudentReg({ ...studentReg, phone: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">Department</label>
+                      <select
+                        value={studentReg.department}
+                        onChange={(e) => setStudentReg({ ...studentReg, department: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option>Computer Science</option>
+                        <option>Information Technology</option>
+                        <option>AI & Data Science</option>
+                        <option>Electronics & Comm</option>
+                        <option>Mechanical Eng</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">Academic Year</label>
+                      <select
+                        value={studentReg.year}
+                        onChange={(e) => setStudentReg({ ...studentReg, year: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option>1st Year</option>
+                        <option>2nd Year</option>
+                        <option>3rd Year</option>
+                        <option>4th Year</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">Password *</label>
+                      <input
+                        type="password"
+                        required
+                        placeholder="Min 6 characters"
+                        value={studentReg.password}
+                        onChange={(e) => setStudentReg({ ...studentReg, password: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 mb-1">Confirm Password *</label>
+                      <input
+                        type="password"
+                        required
+                        placeholder="Re-type password"
+                        value={studentReg.confirm_password}
+                        onChange={(e) => setStudentReg({ ...studentReg, confirm_password: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-sm hover:shadow transition-all disabled:opacity-60 text-sm"
+                  >
+                    {loading ? 'Creating Student Account...' : 'Complete Registration'}
+                  </button>
+                </form>
+              </div>
+            )}
+
+            {/* TAB 3: Admin Login */}
+            {activeTab === 'admin-login' && (
+              <div>
+                <div className="mb-6">
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-amber-50 text-amber-800 text-xs font-semibold border border-amber-200 mb-2">
+                    🔒 Protected Administrative Portal
+                  </div>
+                  <h2 className="text-xl font-bold text-slate-900">Administrator Sign In</h2>
+                  <p className="text-sm text-slate-500">Manage student records, perform CRUD operations, and oversee system metrics.</p>
+                </div>
+
+                <form onSubmit={handleAdminLogin} className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                      Admin Email <span className="text-rose-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      placeholder="admin@nxtlogic.com"
+                      value={adminLogin.email}
+                      onChange={(e) => setAdminLogin({ ...adminLogin, email: e.target.value })}
+                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
+                    />
+                  </div>
+
+                  <div>
+                    <div className="flex justify-between items-center mb-1.5">
+                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                        Master Password <span className="text-rose-500">*</span>
+                      </label>
+                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-xs text-blue-600 hover:underline">
+                        {showPassword ? 'Hide' : 'Show'}
+                      </button>
+                    </div>
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      required
+                      placeholder="Enter administrator password"
+                      value={adminLogin.password}
+                      onChange={(e) => setAdminLogin({ ...adminLogin, password: e.target.value })}
+                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-lg shadow-sm hover:shadow transition-all disabled:opacity-60 flex items-center justify-center gap-2"
+                  >
+                    {loading ? 'Authenticating Admin...' : 'Sign In as Administrator'}
+                  </button>
+                </form>
+
+                {/* Demo autofill */}
+                <div className="mt-5 p-3 bg-amber-50/50 border border-amber-200 rounded-lg flex items-center justify-between">
+                  <div className="text-xs text-amber-900">
+                    <span className="font-semibold">Admin Account:</span> admin@nxtlogic.com
+                  </div>
+                  <button
+                    type="button"
+                    onClick={fillAdminDemo}
+                    className="text-xs px-2.5 py-1 bg-white border border-amber-300 rounded text-amber-800 hover:bg-amber-50 font-semibold transition"
+                  >
+                    Autofill Admin Demo
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
+        </div>
+      );
+    }
 
-          <!-- Options Row -->
-          <div class="form-options">
-            <label class="checkbox-container">
-              <input type="checkbox" id="rememberMe" name="rememberMe">
-              <span class="checkmark"></span>
-              <span class="checkbox-label">Remember me</span>
-            </label>
-          </div>
-
-          <!-- Submit Button -->
-          <button type="submit" id="submitBtn" class="btn-submit">
-            <span class="btn-text">Sign In</span>
-            <span class="btn-spinner" id="btnSpinner" aria-hidden="true" hidden></span>
-          </button>
-        </form>
-
-        <!-- Demo Credentials Helper Box -->
-        <section class="demo-box" aria-label="Demo Credentials">
-          <div class="demo-header">
-            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="12" y1="16" x2="12" y2="12"/>
-              <line x1="12" y1="8" x2="12.01" y2="8"/>
-            </svg>
-            <span>NXTLOGIC Demo Account</span>
-          </div>
-          <button type="button" id="fillDemoBtn" class="btn-fill-demo">
-            Autofill Test Credentials
-          </button>
-        </section>
-
-        <!-- Card Footer -->
-        <footer class="card-footer">
-          <p>Don't have an account? <a href="#" class="signup-link">Sign up</a></p>
-        </footer>
-      </section>
-    </div>
-  </main>
-
-  <script type="module" src="script.js"></script>
+    ReactDOM.createRoot(document.getElementById('root')).render(<AuthApp />);
+  </script>
 </body>
 </html>

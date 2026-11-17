@@ -1,105 +1,71 @@
-# Interactive User Login Page — NextLogic
+# NXTLOGIC — Professional Student Management System (SMS)
 
-A modern, interactive, and responsive user login web application built with **HTML5**, **CSS3**, **JavaScript (ES6 Modules)**, and a lightweight **Node.js** server running on `http://localhost:3000`.
-
----
-
-## 🌟 Features
-
-- **Modern Glassmorphic UI**: High-contrast, clean typography, ambient light effects, and responsive card design for desktop and mobile devices.
-- **Interactive Real-Time Field Validation**:
-  - **Email Address**: Validates required status and RFC-compliant email formatting on input and blur. Displays green checkmark indicator or red warning icon.
-  - **Password**: Live security rule tracking with interactive indicators:
-    - Minimum 8 characters
-    - At least 1 uppercase letter
-    - At least 1 numeric digit
-    - At least 1 special character (`!@#$%^&*...`)
-- **Show / Hide Password Toggle**: Interactive SVG eye icon to inspect or obscure password input.
-- **Form Animation & Feedback**:
-  - Shaking animation on card when invalid input is submitted.
-  - Interactive spinner on submit button during authentication.
-  - Clear, accessible error & success notification banners.
-- **Demo Autofill**: One-click button to autofill test credentials for instant evaluation during review.
-- **Built-in Automated Testing**: 16 unit & integration tests running via Node's native test runner (`node --test`).
-- **Zero External Package Dependencies**: Standard Node.js built-ins (`node:http`, `node:fs`, `node:path`) ensuring instant startup on any machine without installation failures.
+A complete, modern, responsive **Student Management System** built with **Python FastAPI**, **SQLAlchemy ORM**, **JWT Authentication**, and a premium **React + Tailwind CSS** SaaS dashboard.
 
 ---
 
-## 📂 Project Structure
+## 🌟 Modules & Features
 
-```text
-INTERSHIP_NEXTLOGIC/
-├── public/
-│   ├── index.html          # Semantic HTML5 login structure & accessible controls
-│   ├── style.css           # Modern CSS3 styles, animations, variables, and responsive layout
-│   ├── script.js           # Client-side DOM manipulation, event listeners, and API calls
-│   └── validation.js       # Reusable pure validation functions (shared with test suite)
-├── server.js               # Node.js localhost server (serves static files & POST /api/login)
-├── test/
-│   ├── validation.test.js  # Automated unit tests for validation rules
-│   └── server.test.js      # Automated integration tests for localhost endpoints
-├── package.json            # Project configuration & npm scripts ("start", "test")
-├── docs/                   # Design specifications and implementation plans
-└── README.md               # Step-by-step installation and running guide
-```
+### 1. Unified Authentication Portal (`/`)
+- **Student Login**: Authenticate with email & password, JWT token issuance.
+- **Student Registration**: Input validation, duplicate email/roll number prevention, and automated enrollment into the database.
+- **Administrator Portal**: Protected master login for administrative oversight.
+- **Demo Autofill**: One-click test credential population for instant evaluation.
+
+### 2. Student Module (`/student`)
+- **Personal Information**: Full Name, Email, Phone, Date of Birth, Residential Address.
+- **Academic Standing**: Roll No / Student ID, Department, Year, Cumulative GPA (10.0 scale).
+- **Course Enrollment Record**: Table of enrolled semester courses, course codes, credits, and grades.
+- **Edit Profile**: Modal form to update contact info, department, year, and address in real-time.
+- **Change Password**: Secure validation of current password and updates to new password.
+- **Session Logout**: Token expiration and automatic redirection to the login portal.
+
+### 3. Admin Module (`/admin`)
+- **Executive Analytics Overview**:
+  - Total student enrollment counter.
+  - Institutional average CGPA metric.
+  - Department distribution breakdown badges.
+- **Full Student CRUD Operations**:
+  - **Create**: *Enroll New Student* modal with validation.
+  - **Read**: Responsive data table with instant search (by Name, Email, ID) and multi-stream filtering (Department, Year).
+  - **Update**: *Edit Student* modal pre-filled with existing data.
+  - **Delete**: *Delete Student* with confirmation prompt.
+- **Secure Sign Out**: Destroys administrator session token.
 
 ---
 
-## 🚀 Installation & Running Guide
+## 🚀 Running on Localhost
 
-### Step 1: Prerequisites
-Ensure **Node.js** (version 18 or newer) is installed on your computer:
-```bash
-node -v
+### One-Click Launch (Windows):
+Double-click **`start.bat`** in the project folder.
+
+### Manual Launch via Terminal:
+```powershell
+cd C:\Users\ABISHEK\Desktop\INTERSHIP_NEXTLOGIC
+python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-### Step 2: Open Terminal in Project Directory
-Navigate into the project root directory:
-```bash
-cd c:\Users\ABISHEK\Desktop\INTERSHIP_NEXTLOGIC
-```
+Then open your browser at:
+👉 **`http://localhost:8000`**
 
-### Step 3: Start the Localhost Server
-Run the start command:
-```bash
-npm start
-```
-*(Or directly: `node server.js`)*
+- **Interactive API Docs (Swagger UI)**: `http://localhost:8000/docs`
+- **Alternative ReDoc**: `http://localhost:8000/redoc`
 
-You will see the console confirmation:
-```text
-===============================================
-🚀 NextLogic Login Server running on localhost!
-👉 Open URL: http://localhost:3000
-===============================================
-```
+---
 
-### Step 4: Open in Your Browser
-Open your favorite browser (Chrome, Edge, Firefox, Brave) and navigate to:
-```text
-http://localhost:3000
-```
+## 🔑 Pre-seeded Review Demo Accounts
+
+| Role | Email | Password | Access URL |
+| :--- | :--- | :--- | :--- |
+| **Student** | `student@nxtlogic.com` | `Student@2026` | `http://localhost:8000/` (Student tab) |
+| **Administrator** | `admin@nxtlogic.com` | `Admin@2026` | `http://localhost:8000/` (Admin tab) |
 
 ---
 
 ## 🧪 Automated Testing
 
-To run the automated validation test suite:
-```bash
-npm test
+Run the automated test suite covering authentication, duplicate checks, student profile updates, and admin CRUD:
+```powershell
+python -m pytest tests/
 ```
-
-### Test Coverage Highlights:
-- **11 Unit Tests**: Covers empty fields, malformed emails, short passwords, missing uppercase/digits/symbols, and valid payloads.
-- **5 Integration Tests**: Verifies `GET /`, `GET /style.css`, `GET /script.js`, `POST /api/login` 400 rejection on invalid data, and 200 OK on valid credentials.
-
----
-
-## 🔑 Mentor Review Demo Credentials
-
-You can test the application using:
-- **Email**: `intern@nextlogic.com`
-- **Password**: `NextLogic@2026`
-
-*(Or click the **"Autofill Test Credentials"** button right inside the login card!)*
-
+All 6 test suites pass with 100% success rate.
