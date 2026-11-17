@@ -132,9 +132,8 @@
         window.addEventListener('hashchange', handleHash);
 
         // Check active session safely
-        let token = null;
         if (window.auth) {
-          token = window.auth.getToken();
+          const token = window.auth.getToken();
           const role = window.auth.getRole();
           const user = window.auth.getUser();
           if (token && role) {

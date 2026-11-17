@@ -185,7 +185,7 @@ function handleStaticFallback(endpoint, options = {}) {
     };
   }
 
-  // 8. Admin Get Students
+  // 8. Admin Get / Create / Update / Delete Students
   if (endpoint.includes('/api/admin/students')) {
     if (method === 'POST') {
       const newSt = {
@@ -202,6 +202,24 @@ function handleStaticFallback(endpoint, options = {}) {
       students.push(newSt);
       localStorage.setItem('sms_mock_students', JSON.stringify(students));
       return newSt;
+    }
+    if (method === 'PUT') {
+      const match = endpoint.match(/\/students\/(\d+)/);
+      const sId = match ? parseInt(match[1]) : null;
+      const idx = students.findIndex(s => s.id === sId);
+      if (idx !== -1) {
+        students[idx] = { ...students[idx], ...body };
+        localStorage.setItem('sms_mock_students', JSON.stringify(students));
+        return students[idx];
+      }
+      return body;
+    }
+    if (method === 'DELETE') {
+      const match = endpoint.match(/\/students\/(\d+)/);
+      const sId = match ? parseInt(match[1]) : null;
+      students = students.filter(s => s.id !== sId);
+      localStorage.setItem('sms_mock_students', JSON.stringify(students));
+      return { message: 'Student removed successfully' };
     }
     return {
       items: students,
@@ -237,18 +255,34 @@ async function apiRequest(endpoint, options = {}) {
       return await response.json();
     }
 
-    if (response.status === 404 && endpoint.startsWith('/api')) {
+    // Static site hosting (e.g. Render Static Site) returns 405 Method Not Allowed
+    // for POST/PUT/DELETE, and 404 for missing backend endpoints.
+    if ((response.status === 405 || response.status === 404 || response.status === 502 || response.status === 503) && endpoint.startsWith('/api')) {
       return handleStaticFallback(endpoint, options);
     }
 
-    const data = await response.json().catch(() => ({}));
+    const text = await response.text();
+    let data = {};
+    try {
+      data = JSON.parse(text);
+    } catch {
+      // Server returned HTML or plain-text (e.g. 405 Method Not Allowed or 404 Page)
+      if (endpoint.startsWith('/api')) {
+        return handleStaticFallback(endpoint, options);
+      }
+    }
+
     const errorMsg = data.detail || data.message || 'Request failed';
     throw new Error(errorMsg);
   } catch (err) {
-    if (err.message && !err.message.includes('failed to fetch') && !err.message.includes('404') && !err.message.includes('NetworkError')) {
+    if (err.message && (err.message.startsWith('Invalid ') || err.message.includes('already exists') || err.message.includes('Password'))) {
       throw err;
     }
-    return handleStaticFallback(endpoint, options);
+    // If any fetch/network error occurs on static hosting, fall back seamlessly
+    if (endpoint.startsWith('/api')) {
+      return handleStaticFallback(endpoint, options);
+    }
+    throw err;
   }
 }
 
