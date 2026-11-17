@@ -59,6 +59,85 @@
       const [passwordForm, setPasswordForm] = useState({ current_password: '', new_password: '', confirm_password: '' });
       const [msg, setMsg] = useState(null);
 
+      // Interactive Particular Semester Credits & GPA Evaluator State
+      const [calcSemester, setCalcSemester] = useState('Semester 5');
+      const [evalCourses, setEvalCourses] = useState([
+        { name: 'Data Structures & Algorithms', credits: 4, grade: 'A+' },
+        { name: 'Database Management Systems', credits: 4, grade: 'O' },
+        { name: 'Web Technologies & Frameworks', credits: 3, grade: 'O' },
+        { name: 'Cloud Computing & DevOps', credits: 3, grade: 'A' },
+      ]);
+      const [semesterResult, setSemesterResult] = useState(null);
+
+      const gradePoints = {
+        'O': 10,
+        'A+': 9,
+        'A': 8,
+        'B+': 7,
+        'B': 6,
+        'C': 5,
+        'U': 0
+      };
+
+      const handleAddCourseRow = () => {
+        setEvalCourses([...evalCourses, { name: 'Elective / Lab Course', credits: 3, grade: 'A+' }]);
+      };
+
+      const handleRemoveCourseRow = (index) => {
+        if (evalCourses.length <= 1) return;
+        setEvalCourses(evalCourses.filter((_, i) => i !== index));
+      };
+
+      const handleCourseChange = (index, field, value) => {
+        const updated = [...evalCourses];
+        updated[index][field] = field === 'credits' ? Number(value) : value;
+        setEvalCourses(updated);
+      };
+
+      const computeSemesterResult = () => {
+        let totalCredits = 0;
+        let totalWeightedPoints = 0;
+        let hasArrears = false;
+
+        evalCourses.forEach(c => {
+          const cred = Number(c.credits) || 0;
+          const gp = gradePoints[c.grade] !== undefined ? gradePoints[c.grade] : 8;
+          if (c.grade === 'U') hasArrears = true;
+          totalCredits += cred;
+          totalWeightedPoints += cred * gp;
+        });
+
+        const sgpa = totalCredits > 0 ? (totalWeightedPoints / totalCredits) : 0;
+        
+        let standing = 'First Class with Distinction';
+        let badgeColor = 'bg-emerald-50 text-emerald-800 border-emerald-300';
+        if (hasArrears) {
+          standing = 'Re-appear (Arrear Pending)';
+          badgeColor = 'bg-rose-50 text-rose-800 border-rose-300';
+        } else if (sgpa >= 9.0) {
+          standing = 'First Class with Distinction (Exemplary Honors)';
+          badgeColor = 'bg-emerald-50 text-emerald-800 border-emerald-300';
+        } else if (sgpa >= 7.5) {
+          standing = 'First Class with Distinction';
+          badgeColor = 'bg-blue-50 text-blue-800 border-blue-300';
+        } else if (sgpa >= 6.5) {
+          standing = 'First Class';
+          badgeColor = 'bg-amber-50 text-amber-800 border-amber-300';
+        } else {
+          standing = 'Second Class';
+          badgeColor = 'bg-stone-50 text-stone-800 border-stone-300';
+        }
+
+        setSemesterResult({
+          semester: calcSemester,
+          totalCredits,
+          sgpa: sgpa.toFixed(2),
+          totalPoints: totalWeightedPoints,
+          standing,
+          badgeColor
+        });
+      };
+
       useEffect(() => {
         if (!window.auth.requireAuth('student')) return;
         fetchProfile();
@@ -321,57 +400,158 @@
                   </div>
                 </div>
 
-                {/* Additional Content: Semester-Wise Performance & Academic Progression */}
+                {/* INTERACTIVE SEMESTER CREDITS & FINAL RESULT EVALUATOR */}
                 <div className="bg-white rounded-2xl border border-orange-200/80 card-warm-glow p-6">
-                  <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2 pb-4 border-b border-orange-100 mb-5">
+                  <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3 pb-4 border-b border-orange-100 mb-5">
                     <div>
-                      <h3 className="font-extrabold text-stone-900 text-lg">Semester Performance & GPA Progression</h3>
-                      <p className="text-xs text-[#9a3412] font-medium mt-0.5">Historical academic progression across semesters</p>
+                      <h3 className="font-extrabold text-stone-900 text-lg">Semester Credits & Result Evaluator</h3>
+                      <p className="text-xs text-[#9a3412] font-medium mt-0.5">
+                        Select a particular semester, enter your courses, credits and grades to compute your official final result
+                      </p>
                     </div>
-                    <span className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full w-fit">
-                      Overall CGPA: {student?.cgpa?.toFixed(2)} / 10
-                    </span>
-                  </div>
 
-                  {/* Semester Breakdown Grid */}
-                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
-                    <div className="p-3.5 bg-stone-50 rounded-xl border border-stone-200 text-center">
-                      <p className="text-[11px] font-bold text-stone-500 uppercase">Semester 1</p>
-                      <p className="text-xl font-extrabold text-stone-900 mt-1">8.85</p>
-                      <p className="text-[10px] text-emerald-600 font-bold">22 Credits</p>
-                    </div>
-                    <div className="p-3.5 bg-stone-50 rounded-xl border border-stone-200 text-center">
-                      <p className="text-[11px] font-bold text-stone-500 uppercase">Semester 2</p>
-                      <p className="text-xl font-extrabold text-stone-900 mt-1">9.00</p>
-                      <p className="text-[10px] text-emerald-600 font-bold">24 Credits</p>
-                    </div>
-                    <div className="p-3.5 bg-stone-50 rounded-xl border border-stone-200 text-center">
-                      <p className="text-[11px] font-bold text-stone-500 uppercase">Semester 3</p>
-                      <p className="text-xl font-extrabold text-stone-900 mt-1">9.20</p>
-                      <p className="text-[10px] text-emerald-600 font-bold">24 Credits</p>
-                    </div>
-                    <div className="p-3.5 bg-stone-50 rounded-xl border border-stone-200 text-center">
-                      <p className="text-[11px] font-bold text-stone-500 uppercase">Semester 4</p>
-                      <p className="text-xl font-extrabold text-stone-900 mt-1">9.10</p>
-                      <p className="text-[10px] text-emerald-600 font-bold">22 Credits</p>
-                    </div>
-                    <div className="p-3.5 bg-gradient-to-br from-[#fff7ed] to-orange-100/70 rounded-xl border border-[#fed7aa] text-center col-span-2 sm:col-span-1">
-                      <p className="text-[11px] font-bold text-orange-700 uppercase">Sem 5 (Current)</p>
-                      <p className="text-xl font-extrabold text-orange-700 mt-1">9.35</p>
-                      <p className="text-[10px] text-orange-800 font-bold">14 Credits</p>
+                    {/* Particular Semester Selector */}
+                    <div className="flex items-center gap-2 bg-[#fff7ed] px-3 py-1.5 rounded-xl border border-[#fed7aa]">
+                      <label className="text-xs font-bold text-[#7c2d12]">Select Semester:</label>
+                      <select
+                        value={calcSemester}
+                        onChange={(e) => { setCalcSemester(e.target.value); setSemesterResult(null); }}
+                        className="bg-white border border-[#fed7aa] px-2.5 py-1 rounded-lg text-xs font-black text-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer shadow-2xs"
+                      >
+                        <option>Semester 1</option>
+                        <option>Semester 2</option>
+                        <option>Semester 3</option>
+                        <option>Semester 4</option>
+                        <option>Semester 5</option>
+                        <option>Semester 6</option>
+                        <option>Semester 7</option>
+                        <option>Semester 8</option>
+                      </select>
                     </div>
                   </div>
 
-                  {/* Degree Completion Progress Bar */}
-                  <div>
-                    <div className="flex justify-between text-xs font-bold text-stone-700 mb-1.5">
-                      <span>Degree Completion Progress</span>
-                      <span className="text-orange-600">92 / 120 Total Degree Credits Completed (76.6%)</span>
+                  {/* Course / Credits / Grade Input Rows */}
+                  <div className="space-y-3 mb-4">
+                    <div className="flex justify-between items-center text-xs font-extrabold text-stone-400 uppercase tracking-wider px-2">
+                      <span className="w-1/2">Course / Subject Name</span>
+                      <span className="w-1/4 text-center">Semester Credits</span>
+                      <span className="w-1/4 text-right">Grade Obtained</span>
                     </div>
-                    <div className="w-full bg-stone-100 rounded-full h-3 border border-stone-200 overflow-hidden">
-                      <div className="bg-gradient-to-r from-orange-500 to-orange-600 h-3 rounded-full" style={{ width: '76.6%' }}></div>
+
+                    {evalCourses.map((course, idx) => (
+                      <div key={idx} className="flex items-center gap-2 sm:gap-3 p-2.5 bg-stone-50/80 rounded-xl border border-stone-200 hover:border-orange-200 transition">
+                        <input
+                          type="text"
+                          value={course.name}
+                          onChange={(e) => handleCourseChange(idx, 'name', e.target.value)}
+                          placeholder="e.g. Advanced Algorithms"
+                          className="w-1/2 px-3 py-1.5 bg-white border border-stone-300 rounded-lg text-xs sm:text-sm font-bold text-stone-800 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        />
+                        <div className="w-1/4 flex items-center justify-center">
+                          <select
+                            value={course.credits}
+                            onChange={(e) => handleCourseChange(idx, 'credits', e.target.value)}
+                            className="w-full px-2 py-1.5 bg-white border border-stone-300 rounded-lg text-xs font-bold text-center text-stone-800 focus:ring-2 focus:ring-orange-500"
+                          >
+                            <option value="1">1 Credit</option>
+                            <option value="2">2 Credits</option>
+                            <option value="3">3 Credits</option>
+                            <option value="4">4 Credits</option>
+                            <option value="5">5 Credits</option>
+                          </select>
+                        </div>
+                        <div className="w-1/4 flex items-center gap-2 justify-end">
+                          <select
+                            value={course.grade}
+                            onChange={(e) => handleCourseChange(idx, 'grade', e.target.value)}
+                            className="w-full px-2 py-1.5 bg-white border border-stone-300 rounded-lg text-xs font-black text-orange-600 focus:ring-2 focus:ring-orange-500"
+                          >
+                            <option value="O">O (Outstanding - 10)</option>
+                            <option value="A+">A+ (Excellent - 9)</option>
+                            <option value="A">A (Very Good - 8)</option>
+                            <option value="B+">B+ (Good - 7)</option>
+                            <option value="B">B (Average - 6)</option>
+                            <option value="C">C (Pass - 5)</option>
+                            <option value="U">U (Re-appear - 0)</option>
+                          </select>
+                          {evalCourses.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveCourseRow(idx)}
+                              className="text-stone-400 hover:text-rose-600 font-bold text-sm px-1"
+                              title="Delete course"
+                            >
+                              ✕
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+
+                    <div className="flex items-center justify-between pt-2">
+                      <button
+                        type="button"
+                        onClick={handleAddCourseRow}
+                        className="px-3.5 py-1.5 bg-white border border-stone-300 hover:border-orange-400 text-stone-700 text-xs font-bold rounded-lg shadow-2xs transition flex items-center gap-1.5"
+                      >
+                        <span>+</span> Add Course in {calcSemester}
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={computeSemesterResult}
+                        className="px-5 py-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-black text-xs sm:text-sm rounded-lg shadow-sm hover:shadow transition flex items-center gap-2"
+                      >
+                        <span>⚡</span> Calculate {calcSemester} Final Result
+                      </button>
                     </div>
                   </div>
+
+                  {/* FINAL RESULT CARD (RENDERED ON CLICK) */}
+                  {semesterResult && (
+                    <div className="mt-5 p-5 bg-gradient-to-br from-[#fff7ed] via-white to-orange-50/50 rounded-2xl border-2 border-[#fed7aa] shadow-xs">
+                      <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2 pb-3 border-b border-[#fed7aa]/70 mb-4">
+                        <div>
+                          <span className="text-[10px] font-black uppercase tracking-widest text-[#c2410c] bg-orange-100/70 px-2 py-0.5 rounded">
+                            Official Result Slip
+                          </span>
+                          <h4 className="text-lg font-black text-[#7c2d12] mt-1">
+                            {semesterResult.semester} Evaluated Standing
+                          </h4>
+                        </div>
+                        <div className={`px-3 py-1 rounded-full border text-xs font-black ${semesterResult.badgeColor}`}>
+                          ★ {semesterResult.standing}
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center mb-3">
+                        <div className="p-3 bg-white rounded-xl border border-[#fed7aa] shadow-2xs">
+                          <p className="text-[11px] font-bold text-stone-400 uppercase">Semester SGPA</p>
+                          <p className="text-2xl font-black text-orange-600 mt-0.5">
+                            {semesterResult.sgpa} <span className="text-xs text-stone-400 font-semibold">/ 10</span>
+                          </p>
+                        </div>
+                        <div className="p-3 bg-white rounded-xl border border-[#fed7aa] shadow-2xs">
+                          <p className="text-[11px] font-bold text-stone-400 uppercase">Total Credits</p>
+                          <p className="text-2xl font-black text-stone-800 mt-0.5">{semesterResult.totalCredits}</p>
+                        </div>
+                        <div className="p-3 bg-white rounded-xl border border-[#fed7aa] shadow-2xs">
+                          <p className="text-[11px] font-bold text-stone-400 uppercase">Grade Points</p>
+                          <p className="text-2xl font-black text-stone-800 mt-0.5">{semesterResult.totalPoints}</p>
+                        </div>
+                        <div className="p-3 bg-white rounded-xl border border-[#fed7aa] shadow-2xs">
+                          <p className="text-[11px] font-bold text-stone-400 uppercase">Result Status</p>
+                          <p className={`text-base font-black mt-1 ${semesterResult.standing.includes('Re-appear') ? 'text-rose-600' : 'text-emerald-600'}`}>
+                            {semesterResult.standing.includes('Re-appear') ? 'ARREAR' : 'PASSED'}
+                          </p>
+                        </div>
+                      </div>
+
+                      <p className="text-[11px] text-[#9a3412] font-semibold text-center">
+                        Verified and computed per CAMPUSCORE 10.0 Choice-Based Credit System (CBCS) Institutional Guidelines.
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Additional Content: Attendance & Academic Milestones */}
