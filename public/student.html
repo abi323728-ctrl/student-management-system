@@ -217,12 +217,12 @@
         const semesters = ['Semester 1', 'Semester 2', 'Semester 3', 'Semester 4', 'Semester 5', 'Semester 6', 'Semester 7', 'Semester 8'];
         const randomSem = semesters[Math.floor(Math.random() * semesters.length)];
         randomizeForSemester(randomSem);
-
       };
 
       useEffect(() => {
         if (!window.auth.requireAuth('student')) return;
         fetchProfile();
+        computeResultForCourses('Semester 5', semesterCatalog['Semester 5']);
       }, []);
 
       const fetchProfile = async () => {
