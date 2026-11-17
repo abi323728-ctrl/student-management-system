@@ -41,19 +41,31 @@ app.include_router(admin_router.router)
 public_path = os.path.join(os.path.dirname(__file__), "public")
 if os.path.exists(public_path):
     app.mount("/static", StaticFiles(directory=public_path), name="static")
+    app.mount("/public", StaticFiles(directory=public_path), name="public")
 
 @app.get("/")
+@app.get("/index.html")
 def serve_index():
     index_file = os.path.join(public_path, "index.html")
     if os.path.exists(index_file):
         return FileResponse(index_file)
-    return {"message": "NXTLOGIC Student Management System API Live"}
+    return {"message": "CAMPUSCORE Student Management System API Live"}
+
+@app.get("/app.js")
+def serve_app_js():
+    return FileResponse(os.path.join(public_path, "app.js"))
+
+@app.get("/campuscore-logo.png")
+def serve_logo():
+    return FileResponse(os.path.join(public_path, "campuscore-logo.png"))
 
 @app.get("/student")
+@app.get("/student.html")
 def serve_student_dashboard():
     return FileResponse(os.path.join(public_path, "student.html"))
 
 @app.get("/admin")
+@app.get("/admin.html")
 def serve_admin_dashboard():
     return FileResponse(os.path.join(public_path, "admin.html"))
 

@@ -43,7 +43,8 @@
 <body class="bg-stone-50/60 text-slate-800 min-h-screen antialiased">
   <div id="root"></div>
 
-  <!-- Shared Auth & API Script -->
+  <!-- Shared Auth & API Script with multi-environment fallback -->
+  <script src="app.js"></script>
   <script src="/static/app.js"></script>
 
   <!-- React Admin Component -->
@@ -176,7 +177,7 @@
             <div>
               {/* Header */}
               <div className="p-6 border-b border-stone-800 flex items-center gap-3">
-                <img src="/static/campuscore-logo.png" alt="CAMPUSCORE Logo" className="w-11 h-11 rounded-full border border-orange-400 object-cover shadow-sm bg-white" />
+                <img src="campuscore-logo.png" onerror="this.onerror=null; this.src='/static/campuscore-logo.png';" alt="CAMPUSCORE Logo" className="w-11 h-11 rounded-full border border-orange-400 object-cover shadow-sm bg-white" />
                 <div>
                   <h1 className="font-extrabold text-white text-base tracking-wide">CAMPUSCORE</h1>
                   <span className="text-[11px] text-orange-400 font-bold tracking-wider uppercase">Admin Control</span>
