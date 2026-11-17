@@ -320,103 +320,342 @@
                     </dl>
                   </div>
                 </div>
+
+                {/* Additional Content: Semester-Wise Performance & Academic Progression */}
+                <div className="bg-white rounded-2xl border border-orange-200/80 card-warm-glow p-6">
+                  <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2 pb-4 border-b border-orange-100 mb-5">
+                    <div>
+                      <h3 className="font-extrabold text-stone-900 text-lg">Semester Performance & GPA Progression</h3>
+                      <p className="text-xs text-[#9a3412] font-medium mt-0.5">Historical academic progression across semesters</p>
+                    </div>
+                    <span className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full w-fit">
+                      Overall CGPA: {student?.cgpa?.toFixed(2)} / 10
+                    </span>
+                  </div>
+
+                  {/* Semester Breakdown Grid */}
+                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
+                    <div className="p-3.5 bg-stone-50 rounded-xl border border-stone-200 text-center">
+                      <p className="text-[11px] font-bold text-stone-500 uppercase">Semester 1</p>
+                      <p className="text-xl font-extrabold text-stone-900 mt-1">8.85</p>
+                      <p className="text-[10px] text-emerald-600 font-bold">22 Credits</p>
+                    </div>
+                    <div className="p-3.5 bg-stone-50 rounded-xl border border-stone-200 text-center">
+                      <p className="text-[11px] font-bold text-stone-500 uppercase">Semester 2</p>
+                      <p className="text-xl font-extrabold text-stone-900 mt-1">9.00</p>
+                      <p className="text-[10px] text-emerald-600 font-bold">24 Credits</p>
+                    </div>
+                    <div className="p-3.5 bg-stone-50 rounded-xl border border-stone-200 text-center">
+                      <p className="text-[11px] font-bold text-stone-500 uppercase">Semester 3</p>
+                      <p className="text-xl font-extrabold text-stone-900 mt-1">9.20</p>
+                      <p className="text-[10px] text-emerald-600 font-bold">24 Credits</p>
+                    </div>
+                    <div className="p-3.5 bg-stone-50 rounded-xl border border-stone-200 text-center">
+                      <p className="text-[11px] font-bold text-stone-500 uppercase">Semester 4</p>
+                      <p className="text-xl font-extrabold text-stone-900 mt-1">9.10</p>
+                      <p className="text-[10px] text-emerald-600 font-bold">22 Credits</p>
+                    </div>
+                    <div className="p-3.5 bg-gradient-to-br from-[#fff7ed] to-orange-100/70 rounded-xl border border-[#fed7aa] text-center col-span-2 sm:col-span-1">
+                      <p className="text-[11px] font-bold text-orange-700 uppercase">Sem 5 (Current)</p>
+                      <p className="text-xl font-extrabold text-orange-700 mt-1">9.35</p>
+                      <p className="text-[10px] text-orange-800 font-bold">14 Credits</p>
+                    </div>
+                  </div>
+
+                  {/* Degree Completion Progress Bar */}
+                  <div>
+                    <div className="flex justify-between text-xs font-bold text-stone-700 mb-1.5">
+                      <span>Degree Completion Progress</span>
+                      <span className="text-orange-600">92 / 120 Total Degree Credits Completed (76.6%)</span>
+                    </div>
+                    <div className="w-full bg-stone-100 rounded-full h-3 border border-stone-200 overflow-hidden">
+                      <div className="bg-gradient-to-r from-orange-500 to-orange-600 h-3 rounded-full" style={{ width: '76.6%' }}></div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Additional Content: Attendance & Academic Milestones */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Attendance & Honors Card */}
+                  <div className="bg-white rounded-2xl border border-orange-200/80 card-warm-glow p-6">
+                    <h3 className="font-extrabold text-stone-900 text-base mb-4 pb-2 border-b border-orange-100">
+                      Attendance & Institutional Milestones
+                    </h3>
+                    <div className="space-y-3.5">
+                      <div className="flex items-center justify-between p-3 bg-emerald-50/70 rounded-xl border border-emerald-200">
+                        <div className="flex items-center gap-2.5">
+                          <span className="text-lg">📊</span>
+                          <div>
+                            <p className="text-xs font-bold text-emerald-900">Overall Semester Attendance</p>
+                            <p className="text-[11px] text-emerald-700">Eligible for end-semester examinations</p>
+                          </div>
+                        </div>
+                        <span className="text-lg font-black text-emerald-700">94.8%</span>
+                      </div>
+
+                      <div className="flex items-center gap-3 p-3 bg-stone-50 rounded-xl border border-stone-200">
+                        <span className="text-lg">🎖️</span>
+                        <div>
+                          <p className="text-xs font-bold text-stone-800">Dean’s Merit Honor Roll</p>
+                          <p className="text-[11px] text-stone-500">Awarded for ranking in top 5% of department</p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3 p-3 bg-stone-50 rounded-xl border border-stone-200">
+                        <span className="text-lg">📜</span>
+                        <div>
+                          <p className="text-xs font-bold text-stone-800">Co-Curricular Certification</p>
+                          <p className="text-[11px] text-stone-500">IEEE Student Chapter Member & Hackathon Finalist</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Recent Academic Activity Feed */}
+                  <div className="bg-white rounded-2xl border border-orange-200/80 card-warm-glow p-6">
+                    <h3 className="font-extrabold text-stone-900 text-base mb-4 pb-2 border-b border-orange-100">
+                      Recent Academic Activity
+                    </h3>
+                    <div className="space-y-3">
+                      <div className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-stone-50 transition border border-stone-100">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 mt-1.5 flex-shrink-0"></span>
+                        <div className="text-xs">
+                          <p className="font-bold text-stone-800">CS301 Algorithm Analysis Assignment 3 Evaluated</p>
+                          <p className="text-stone-500 text-[11px]">Score: 29/30 (Grade: A+) • Nov 15, 2026</p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-stone-50 transition border border-stone-100">
+                        <span className="w-2 h-2 rounded-full bg-blue-500 mt-1.5 flex-shrink-0"></span>
+                        <div className="text-xs">
+                          <p className="font-bold text-stone-800">CS302 DBMS Schema Normalization Viva Cleared</p>
+                          <p className="text-stone-500 text-[11px]">Practical Lab Evaluator: Prof. M. Anitha • Nov 12, 2026</p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-stone-50 transition border border-stone-100">
+                        <span className="w-2 h-2 rounded-full bg-orange-500 mt-1.5 flex-shrink-0"></span>
+                        <div className="text-xs">
+                          <p className="font-bold text-stone-800">Semester 5 Examination Hall Ticket Generated</p>
+                          <p className="text-stone-500 text-[11px]">Download available under Exam Center • Nov 10, 2026</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
 
             {/* TAB 2: ENROLLED COURSES */}
             {activeTab === 'courses' && (
-              <div className="bg-white rounded-2xl border border-orange-200/80 card-warm-glow overflow-hidden">
-                <div className="p-6 border-b border-orange-100 flex justify-between items-center bg-[#fff7ed]/50">
-                  <div>
-                    <h3 className="text-lg font-bold text-stone-900">Current Semester Enrolled Courses</h3>
-                    <p className="text-xs text-[#9a3412] font-medium mt-0.5">Academic coursework and earned credits</p>
+              <div className="space-y-6">
+                {/* Main Enrolled Courses Table */}
+                <div className="bg-white rounded-2xl border border-orange-200/80 card-warm-glow overflow-hidden">
+                  <div className="p-6 border-b border-orange-100 flex justify-between items-center bg-[#fff7ed]/50">
+                    <div>
+                      <h3 className="text-lg font-bold text-stone-900">Current Semester Enrolled Courses</h3>
+                      <p className="text-xs text-[#9a3412] font-medium mt-0.5">Academic coursework and earned credits</p>
+                    </div>
+                    <span className="text-xs font-bold text-[#c2410c] bg-white border border-[#fed7aa] px-3.5 py-1.5 rounded-full shadow-xs">
+                      Total Credits: {student?.courses?.reduce((acc, c) => acc + c.credits, 0) || 0}
+                    </span>
                   </div>
-                  <span className="text-xs font-bold text-[#c2410c] bg-white border border-[#fed7aa] px-3.5 py-1.5 rounded-full shadow-xs">
-                    Total Credits: {student?.courses?.reduce((acc, c) => acc + c.credits, 0) || 0}
-                  </span>
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm text-stone-700">
+                      <thead className="bg-stone-50 text-xs uppercase font-extrabold text-stone-500 border-b border-stone-200">
+                        <tr>
+                          <th className="px-6 py-3.5">Course Code</th>
+                          <th className="px-6 py-3.5">Course Title</th>
+                          <th className="px-6 py-3.5">Semester</th>
+                          <th className="px-6 py-3.5">Credits</th>
+                          <th className="px-6 py-3.5">Grade</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-stone-100">
+                        {student?.courses?.map((c) => (
+                          <tr key={c.id} className="hover:bg-orange-50/40 transition">
+                            <td className="px-6 py-4 font-extrabold text-orange-600">{c.course_code}</td>
+                            <td className="px-6 py-4 font-bold text-stone-900">{c.course_name}</td>
+                            <td className="px-6 py-4 text-stone-500">{c.semester}</td>
+                            <td className="px-6 py-4 font-semibold">{c.credits} Credits</td>
+                            <td className="px-6 py-4">
+                              <span className="px-2.5 py-1 bg-emerald-100 text-emerald-800 font-extrabold rounded text-xs">
+                                {c.grade}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
 
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-sm text-stone-700">
-                    <thead className="bg-stone-50 text-xs uppercase font-extrabold text-stone-500 border-b border-stone-200">
-                      <tr>
-                        <th className="px-6 py-3.5">Course Code</th>
-                        <th className="px-6 py-3.5">Course Title</th>
-                        <th className="px-6 py-3.5">Semester</th>
-                        <th className="px-6 py-3.5">Credits</th>
-                        <th className="px-6 py-3.5">Grade</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-stone-100">
-                      {student?.courses?.map((c) => (
-                        <tr key={c.id} className="hover:bg-orange-50/40 transition">
-                          <td className="px-6 py-4 font-extrabold text-orange-600">{c.course_code}</td>
-                          <td className="px-6 py-4 font-bold text-stone-900">{c.course_name}</td>
-                          <td className="px-6 py-4 text-stone-500">{c.semester}</td>
-                          <td className="px-6 py-4 font-semibold">{c.credits} Credits</td>
-                          <td className="px-6 py-4">
-                            <span className="px-2.5 py-1 bg-emerald-100 text-emerald-800 font-extrabold rounded text-xs">
-                              {c.grade}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                {/* Additional Content: Course Instructors & Timetable */}
+                <div className="bg-white rounded-2xl border border-orange-200/80 card-warm-glow p-6">
+                  <div className="pb-4 border-b border-orange-100 mb-5">
+                    <h3 className="font-extrabold text-stone-900 text-lg">Course Instructors & Lecture Schedule</h3>
+                    <p className="text-xs text-[#9a3412] font-medium mt-0.5">Faculty mentors, lecture room allocations, and attendance breakdown</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="p-4 bg-stone-50/80 rounded-xl border border-stone-200">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-orange-100 text-orange-700">CS301</span>
+                          <h4 className="font-bold text-sm text-stone-900 mt-1">Data Structures & Algorithms</h4>
+                        </div>
+                        <span className="text-xs font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">96.5% Attd</span>
+                      </div>
+                      <p className="text-xs text-stone-600 mt-1"><strong>Instructor:</strong> Dr. K. Sharma, Ph.D. • Room CS-204</p>
+                      <p className="text-xs text-stone-500 mt-0.5">Mon / Wed / Fri • 10:00 AM – 11:30 AM</p>
+                    </div>
+
+                    <div className="p-4 bg-stone-50/80 rounded-xl border border-stone-200">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-orange-100 text-orange-700">CS302</span>
+                          <h4 className="font-bold text-sm text-stone-900 mt-1">Database Management Systems</h4>
+                        </div>
+                        <span className="text-xs font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">92.0% Attd</span>
+                      </div>
+                      <p className="text-xs text-stone-600 mt-1"><strong>Instructor:</strong> Prof. M. Anitha, M.Tech. • Room CS-301</p>
+                      <p className="text-xs text-stone-500 mt-0.5">Tue / Thu • 11:30 AM – 01:00 PM</p>
+                    </div>
+
+                    <div className="p-4 bg-stone-50/80 rounded-xl border border-stone-200">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-orange-100 text-orange-700">CS303</span>
+                          <h4 className="font-bold text-sm text-stone-900 mt-1">Web Technologies & Frameworks</h4>
+                        </div>
+                        <span className="text-xs font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">98.0% Attd</span>
+                      </div>
+                      <p className="text-xs text-stone-600 mt-1"><strong>Instructor:</strong> Dr. R. Vignesh, Ph.D. • Software Lab 2</p>
+                      <p className="text-xs text-stone-500 mt-0.5">Mon / Thu • 02:00 PM – 04:00 PM</p>
+                    </div>
+
+                    <div className="p-4 bg-stone-50/80 rounded-xl border border-stone-200">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-orange-100 text-orange-700">CS304</span>
+                          <h4 className="font-bold text-sm text-stone-900 mt-1">Cloud Computing & DevOps</h4>
+                        </div>
+                        <span className="text-xs font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">94.5% Attd</span>
+                      </div>
+                      <p className="text-xs text-stone-600 mt-1"><strong>Instructor:</strong> Prof. S. Rajesh, M.E. • Cloud Systems Lab</p>
+                      <p className="text-xs text-stone-500 mt-0.5">Wed / Fri • 02:00 PM – 04:00 PM</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Additional Content: Academic Resources & Study Materials */}
+                <div className="bg-white rounded-2xl border border-orange-200/80 card-warm-glow p-6">
+                  <h3 className="font-extrabold text-stone-900 text-base mb-3 pb-2 border-b border-orange-100">
+                    Course Resources & Digital Handouts
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                    <div className="p-3 rounded-xl border border-stone-200 bg-stone-50/60 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-base">📄</span>
+                        <span className="font-bold text-stone-800">Syllabus & Lecture Notes</span>
+                      </div>
+                      <span className="text-orange-600 font-extrabold hover:underline cursor-pointer">PDF</span>
+                    </div>
+
+                    <div className="p-3 rounded-xl border border-stone-200 bg-stone-50/60 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-base">💻</span>
+                        <span className="font-bold text-stone-800">Lab Problem Manuals</span>
+                      </div>
+                      <span className="text-orange-600 font-extrabold hover:underline cursor-pointer">ZIP</span>
+                    </div>
+
+                    <div className="p-3 rounded-xl border border-stone-200 bg-stone-50/60 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-base">🎯</span>
+                        <span className="font-bold text-stone-800">Internal Rubrics & Schedule</span>
+                      </div>
+                      <span className="text-orange-600 font-extrabold hover:underline cursor-pointer">View</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
 
-            {/* TAB 3: SETTINGS & PASSWORD */}
+            {/* TAB 3: SETTINGS & PASSWORD (CENTERED LAYOUT) */}
             {activeTab === 'settings' && (
-              <div className="max-w-xl bg-white rounded-2xl border border-orange-200/80 card-warm-glow p-6 sm:p-8">
-                <h3 className="text-lg font-bold text-stone-900 mb-1">Security & Change Password</h3>
-                <p className="text-xs text-stone-500 mb-6 font-medium">Update your account credentials to keep your profile secure.</p>
-
-                <form onSubmit={handleChangePassword} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1.5">Current Password *</label>
-                    <input
-                      type="password"
-                      required
-                      placeholder="••••••••"
-                      value={passwordForm.current_password}
-                      onChange={(e) => setPasswordForm({ ...passwordForm, current_password: e.target.value })}
-                      className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    />
+              <div className="flex flex-col items-center justify-center py-6 w-full">
+                <div className="max-w-xl w-full bg-white rounded-2xl border border-orange-200/80 card-warm-glow p-6 sm:p-8 shadow-sm">
+                  <div className="text-center mb-6">
+                    <div className="w-12 h-12 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-xl mx-auto mb-2.5 border border-orange-200">
+                      🔒
+                    </div>
+                    <h3 className="text-xl font-extrabold text-stone-900">Security & Change Password</h3>
+                    <p className="text-xs text-stone-500 font-medium mt-1">Update your account credentials to keep your profile secure.</p>
                   </div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1.5">New Password *</label>
-                    <input
-                      type="password"
-                      required
-                      placeholder="Min 6 characters"
-                      value={passwordForm.new_password}
-                      onChange={(e) => setPasswordForm({ ...passwordForm, new_password: e.target.value })}
-                      className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    />
-                  </div>
+                  <form onSubmit={handleChangePassword} className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1.5">Current Password *</label>
+                      <input
+                        type="password"
+                        required
+                        placeholder="••••••••"
+                        value={passwordForm.current_password}
+                        onChange={(e) => setPasswordForm({ ...passwordForm, current_password: e.target.value })}
+                        className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      />
+                    </div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1.5">Confirm New Password *</label>
-                    <input
-                      type="password"
-                      required
-                      placeholder="Re-type new password"
-                      value={passwordForm.confirm_password}
-                      onChange={(e) => setPasswordForm({ ...passwordForm, confirm_password: e.target.value })}
-                      className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    />
-                  </div>
+                    <div>
+                      <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1.5">New Password *</label>
+                      <input
+                        type="password"
+                        required
+                        placeholder="Min 6 characters"
+                        value={passwordForm.new_password}
+                        onChange={(e) => setPasswordForm({ ...passwordForm, new_password: e.target.value })}
+                        className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      />
+                    </div>
 
-                  <button
-                    type="submit"
-                    className="w-full py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold rounded-lg text-sm transition shadow-sm"
-                  >
-                    Update Password
-                  </button>
-                </form>
+                    <div>
+                      <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1.5">Confirm New Password *</label>
+                      <input
+                        type="password"
+                        required
+                        placeholder="Re-type new password"
+                        value={passwordForm.confirm_password}
+                        onChange={(e) => setPasswordForm({ ...passwordForm, confirm_password: e.target.value })}
+                        className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      className="w-full py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold rounded-lg text-sm transition shadow-sm"
+                    >
+                      Update Password
+                    </button>
+                  </form>
+                </div>
+
+                {/* Supporting Security Information Cards */}
+                <div className="max-w-xl w-full mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 text-center text-xs text-stone-600">
+                  <div className="p-3 bg-white rounded-xl border border-orange-200/60 shadow-2xs">
+                    <p className="font-bold text-stone-800">🔐 Password Policy</p>
+                    <p className="text-[11px] text-stone-500 mt-0.5">Min 6 characters required</p>
+                  </div>
+                  <div className="p-3 bg-white rounded-xl border border-orange-200/60 shadow-2xs">
+                    <p className="font-bold text-stone-800">🛡️ Token Security</p>
+                    <p className="text-[11px] text-stone-500 mt-0.5">HS256 Encrypted Session</p>
+                  </div>
+                  <div className="p-3 bg-white rounded-xl border border-orange-200/60 shadow-2xs">
+                    <p className="font-bold text-stone-800">📍 Active Session</p>
+                    <p className="text-[11px] text-stone-500 mt-0.5">Localhost Student Device</p>
+                  </div>
+                </div>
               </div>
             )}
 
