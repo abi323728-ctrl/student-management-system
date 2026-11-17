@@ -2,7 +2,10 @@ import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./data_sms.db")
+if "VERCEL" in os.environ and "DATABASE_URL" not in os.environ:
+    DATABASE_URL = "sqlite:////tmp/data_sms.db"
+else:
+    DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./data_sms.db")
 
 connect_args = {}
 if DATABASE_URL.startswith("sqlite"):
