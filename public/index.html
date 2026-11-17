@@ -351,173 +351,96 @@
           </nav>
 
           {/* ========================================================
-              PAGE 1: MAIN CAMPUS DASHBOARD
-              (Shown first without long scroll)
+              PAGE 1: MAIN CAMPUS DASHBOARD (CLEAN & MINIMALIST)
              ======================================================== */}
           {currentPage === 'dashboard' && (
-            <main className="flex-1 px-4 sm:px-6 py-10 max-w-6xl mx-auto w-full fade-in">
+            <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-12 max-w-4xl mx-auto w-full text-center fade-in">
               
-              {/* Hero Banner Section */}
-              <div className="text-center pt-2 pb-8">
-                {/* Large Official CAMPUSCORE Symbol */}
-                <div className="inline-block relative mb-5">
-                  <div className="p-2 rounded-full bg-gradient-to-tr from-orange-400 via-amber-200 to-orange-500 logo-hero-glow">
-                    <img
-                      src="/static/campuscore-logo.png"
-                      alt="CAMPUSCORE Official Symbol"
-                      className="w-40 h-40 sm:w-48 sm:h-48 rounded-full border-4 border-white object-cover mx-auto bg-white"
-                    />
-                  </div>
-                  <div className="absolute -bottom-3 inset-x-0 flex justify-center">
-                    <span className="bg-[#fff7ed] text-[#c2410c] text-[11px] sm:text-xs font-black uppercase tracking-widest px-4 py-1 rounded-full border border-[#fed7aa] shadow-xs">
-                      Primary Campus Hub
-                    </span>
-                  </div>
+              {/* Large Official CAMPUSCORE Symbol */}
+              <div className="inline-block relative mb-6">
+                <div className="p-2.5 rounded-full bg-gradient-to-tr from-orange-400 via-amber-200 to-orange-500 logo-hero-glow">
+                  <img
+                    src="/static/campuscore-logo.png"
+                    alt="CAMPUSCORE Official Symbol"
+                    className="w-44 h-44 sm:w-52 sm:h-52 rounded-full border-4 border-white object-cover mx-auto bg-white"
+                  />
                 </div>
+              </div>
 
-                {/* Title & Official Slogan */}
-                <h1 className="text-3xl sm:text-5xl font-black text-[#7c2d12] tracking-tight mb-2 mt-4">
-                  CAMPUSCORE
-                </h1>
-                
-                <div className="inline-block mb-4">
-                  <p className="text-xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-600 via-amber-600 to-orange-500 tracking-tight">
-                    “Connecting Campus. Empowering Futures.”
-                  </p>
-                </div>
-
-                <p className="text-sm sm:text-base text-stone-600 max-w-2xl mx-auto leading-relaxed mb-8">
-                  Welcome to the official institutional student management system. Seamlessly connect with your academic records, track course milestones, or administer college operations through dedicated portals.
+              {/* Title & Official Slogan */}
+              <h1 className="text-4xl sm:text-5xl font-black text-[#7c2d12] tracking-tight mb-2">
+                CAMPUSCORE
+              </h1>
+              
+              <div className="inline-block mb-8">
+                <p className="text-xl sm:text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-600 via-amber-600 to-orange-500 tracking-tight">
+                  “Connecting Campus. Empowering Futures.”
                 </p>
-
-                {/* Page 1 Action Button to Go Inside */}
-                <div className="flex flex-wrap items-center justify-center gap-3">
-                  <button
-                    onClick={() => navigateTo('portal', 'student-login')}
-                    className="px-6 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-extrabold text-sm sm:text-base shadow-md hover:shadow-lg transition flex items-center gap-2 group"
-                  >
-                    <span>Proceed to Portals & Sign In</span>
-                    <span className="group-hover:translate-x-1 transition-transform">→</span>
-                  </button>
-                </div>
               </div>
 
-              {/* 3 Interactive Gateway Cards (Page 1 -> Page 2) */}
-              <div className="mb-12">
-                <div className="text-center mb-6">
-                  <h2 className="text-xl sm:text-2xl font-black text-stone-900">Dedicated Portal Gateways</h2>
-                  <p className="text-xs sm:text-sm text-stone-500">Select your destination module to access credentials or admission</p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                  
-                  {/* Gateway 1: Student Login */}
-                  <div 
-                    onClick={() => navigateTo('portal', 'student-login')}
-                    className="p-6 rounded-2xl bg-gradient-to-b from-white to-[#fff7ed]/50 border-2 border-[#fed7aa] portal-card-hover cursor-pointer flex flex-col justify-between"
-                  >
-                    <div>
-                      <div className="w-12 h-12 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center text-2xl mb-4 border border-[#fed7aa]">
-                        🎓
-                      </div>
-                      <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#c2410c] bg-orange-100/60 px-2 py-0.5 rounded">Module 1</span>
-                      <h3 className="text-lg font-black text-[#7c2d12] mt-2 mb-1.5">Student Login</h3>
-                      <p className="text-xs text-stone-600 leading-relaxed mb-4">
-                        Access personal profiles, enrolled course grades, CGPA performance, and download academic credentials.
-                      </p>
+              {/* 3 Dedicated Gateways (Student Login, Student Register, Admin Control) */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full max-w-3xl mb-4">
+                
+                {/* Gateway 1: Student Login */}
+                <div 
+                  onClick={() => navigateTo('portal', 'student-login')}
+                  className="p-6 rounded-2xl bg-gradient-to-b from-white to-[#fff7ed]/60 border-2 border-[#fed7aa] portal-card-hover cursor-pointer flex flex-col justify-between text-left shadow-xs"
+                >
+                  <div>
+                    <div className="w-12 h-12 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center text-2xl mb-4 border border-[#fed7aa]">
+                      🎓
                     </div>
-                    <div className="pt-3 border-t border-[#fed7aa]/60 flex items-center justify-between text-xs font-bold text-orange-600">
-                      <span>Open Student Login</span>
-                      <span>→</span>
-                    </div>
+                    <h3 className="text-lg font-black text-[#7c2d12] mb-1">Student Login</h3>
+                    <p className="text-xs text-stone-600 leading-relaxed mb-4">
+                      Access student profile, enrolled courses, and academic standing.
+                    </p>
                   </div>
-
-                  {/* Gateway 2: Student Registration */}
-                  <div 
-                    onClick={() => navigateTo('portal', 'student-register')}
-                    className="p-6 rounded-2xl bg-gradient-to-b from-white to-[#fff7ed]/50 border-2 border-[#fed7aa] portal-card-hover cursor-pointer flex flex-col justify-between"
-                  >
-                    <div>
-                      <div className="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-2xl mb-4 border border-[#fed7aa]">
-                        📝
-                      </div>
-                      <span className="text-[10px] font-extrabold uppercase tracking-widest text-amber-800 bg-amber-100/60 px-2 py-0.5 rounded">Admissions</span>
-                      <h3 className="text-lg font-black text-[#7c2d12] mt-2 mb-1.5">Student Registration</h3>
-                      <p className="text-xs text-stone-600 leading-relaxed mb-4">
-                        New admission portal. Instant enrollment with automated Student ID assignment, department, and academic year.
-                      </p>
-                    </div>
-                    <div className="pt-3 border-t border-[#fed7aa]/60 flex items-center justify-between text-xs font-bold text-orange-600">
-                      <span>Open Registration</span>
-                      <span>→</span>
-                    </div>
-                  </div>
-
-                  {/* Gateway 3: Admin Control */}
-                  <div 
-                    onClick={() => navigateTo('portal', 'admin-login')}
-                    className="p-6 rounded-2xl bg-gradient-to-b from-white to-[#fff7ed]/50 border-2 border-[#fed7aa] portal-card-hover cursor-pointer flex flex-col justify-between"
-                  >
-                    <div>
-                      <div className="w-12 h-12 rounded-xl bg-stone-100 text-stone-800 flex items-center justify-center text-2xl mb-4 border border-[#fed7aa]">
-                        🛡️
-                      </div>
-                      <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#7c2d12] bg-stone-200/60 px-2 py-0.5 rounded">Module 2</span>
-                      <h3 className="text-lg font-black text-[#7c2d12] mt-2 mb-1.5">Admin Control Center</h3>
-                      <p className="text-xs text-stone-600 leading-relaxed mb-4">
-                        Master management console. Full CRUD operations over student records, live search, department filters, and stats.
-                      </p>
-                    </div>
-                    <div className="pt-3 border-t border-[#fed7aa]/60 flex items-center justify-between text-xs font-bold text-orange-600">
-                      <span>Access Admin Console</span>
-                      <span>→</span>
-                    </div>
-                  </div>
-
-                </div>
-              </div>
-
-              {/* Live Campus Metrics Overview */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
-                <div className="p-4 rounded-xl bg-[#fff7ed] border border-[#fed7aa]">
-                  <p className="text-xs font-bold text-[#c2410c] uppercase">Active Students</p>
-                  <p className="text-2xl font-black text-[#7c2d12] mt-0.5">{stats.total_students}</p>
-                  <p className="text-[11px] text-[#9a3412] font-semibold">Enrolled in Database</p>
-                </div>
-                <div className="p-4 rounded-xl bg-[#fff7ed] border border-[#fed7aa]">
-                  <p className="text-xs font-bold text-[#c2410c] uppercase">Departments</p>
-                  <p className="text-2xl font-black text-[#7c2d12] mt-0.5">{stats.departments}</p>
-                  <p className="text-[11px] text-[#9a3412] font-semibold">Active Engineering Wings</p>
-                </div>
-                <div className="p-4 rounded-xl bg-[#fff7ed] border border-[#fed7aa]">
-                  <p className="text-xs font-bold text-[#c2410c] uppercase">Curriculum</p>
-                  <p className="text-2xl font-black text-[#7c2d12] mt-0.5">{stats.avg_cgpa}</p>
-                  <p className="text-[11px] text-[#9a3412] font-semibold">10.0 CGPA CBCS Scale</p>
-                </div>
-                <div className="p-4 rounded-xl bg-[#fff7ed] border border-[#fed7aa]">
-                  <p className="text-xs font-bold text-[#c2410c] uppercase">Placement Rate</p>
-                  <p className="text-2xl font-black text-[#7c2d12] mt-0.5">{stats.placement}</p>
-                  <p className="text-[11px] text-[#9a3412] font-semibold">Graduating Success Index</p>
-                </div>
-              </div>
-
-              {/* Campus Notices */}
-              <div className="p-5 rounded-2xl bg-stone-50 border border-stone-200 mb-6">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="text-lg">📢</span>
-                  <h3 className="font-extrabold text-stone-900 text-sm">Campus Notice Board & System Broadcast</h3>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs text-stone-600">
-                  <div className="p-3 bg-white rounded-lg border border-stone-200">
-                    <span className="font-bold text-stone-800">Examination Timetable:</span> Final semester timetables and hall tickets are live in the student portal.
-                  </div>
-                  <div className="p-3 bg-white rounded-lg border border-stone-200">
-                    <span className="font-bold text-stone-800">New Registration:</span> Open for academic year 2026 across Computer Science, IT, and AI & DS.
-                  </div>
-                  <div className="p-3 bg-white rounded-lg border border-stone-200">
-                    <span className="font-bold text-stone-800">System Security:</span> End-to-end JWT authentication and real-time SQLite database persistence active.
+                  <div className="pt-3 border-t border-[#fed7aa]/60 flex items-center justify-between text-xs font-bold text-orange-600">
+                    <span>Enter Student Login</span>
+                    <span>→</span>
                   </div>
                 </div>
+
+                {/* Gateway 2: Student Register */}
+                <div 
+                  onClick={() => navigateTo('portal', 'student-register')}
+                  className="p-6 rounded-2xl bg-gradient-to-b from-white to-[#fff7ed]/60 border-2 border-[#fed7aa] portal-card-hover cursor-pointer flex flex-col justify-between text-left shadow-xs"
+                >
+                  <div>
+                    <div className="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-2xl mb-4 border border-[#fed7aa]">
+                      📝
+                    </div>
+                    <h3 className="text-lg font-black text-[#7c2d12] mb-1">Student Register</h3>
+                    <p className="text-xs text-stone-600 leading-relaxed mb-4">
+                      New admission enrollment and personal profile creation.
+                    </p>
+                  </div>
+                  <div className="pt-3 border-t border-[#fed7aa]/60 flex items-center justify-between text-xs font-bold text-orange-600">
+                    <span>Enter Registration</span>
+                    <span>→</span>
+                  </div>
+                </div>
+
+                {/* Gateway 3: Admin Control */}
+                <div 
+                  onClick={() => navigateTo('portal', 'admin-login')}
+                  className="p-6 rounded-2xl bg-gradient-to-b from-white to-[#fff7ed]/60 border-2 border-[#fed7aa] portal-card-hover cursor-pointer flex flex-col justify-between text-left shadow-xs"
+                >
+                  <div>
+                    <div className="w-12 h-12 rounded-xl bg-stone-100 text-stone-800 flex items-center justify-center text-2xl mb-4 border border-[#fed7aa]">
+                      🛡️
+                    </div>
+                    <h3 className="text-lg font-black text-[#7c2d12] mb-1">Admin Control</h3>
+                    <p className="text-xs text-stone-600 leading-relaxed mb-4">
+                      Manage student records, perform CRUD operations, and oversee system.
+                    </p>
+                  </div>
+                  <div className="pt-3 border-t border-[#fed7aa]/60 flex items-center justify-between text-xs font-bold text-orange-600">
+                    <span>Access Admin Portal</span>
+                    <span>→</span>
+                  </div>
+                </div>
+
               </div>
 
             </main>
